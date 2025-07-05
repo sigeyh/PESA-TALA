@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PESA TALA - Loan Approved</title>
+  <title>PESA TALA - Loan Limit</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-purple-900 via-purple-700 to-gray-200 flex items-center justify-center min-h-screen px-4 text-white">
@@ -11,49 +11,73 @@
   <div class="text-center max-w-md w-full">
     <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl">
 
+      <!-- Icon + Title -->
       <div class="mb-4">
         <svg class="w-16 h-16 mx-auto text-green-400 animate-bounce" fill="none" stroke="currentColor" stroke-width="2"
           viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M5 13l4 4L19 7" />
         </svg>
-        <h2 class="text-2xl font-bold mt-2">Loan Approved</h2>
-        <p class="text-sm text-gray-200">You're eligible for a loan up to:</p>
+        <h2 class="text-2xl font-bold mt-2">Loan Limit Approved</h2>
+        <p class="text-sm text-gray-200">You're eligible for up to:</p>
       </div>
 
-      <div class="text-4xl font-extrabold text-yellow-300 my-4" id="loanAmount">Ksh 0</div>
+      <!-- Loan Amount -->
+      <div class="text-4xl font-extrabold text-yellow-300 my-3" id="loanAmount">Ksh 0</div>
 
-      <p class="text-sm text-gray-300">Redirecting to verification page...</p>
+      <!-- Progress Bar -->
+      <div class="w-full bg-gray-300 rounded-full h-3 mb-6 overflow-hidden">
+        <div id="progressBar" class="bg-yellow-400 h-3 transition-all duration-500" style="width: 0%"></div>
+      </div>
+
+      <!-- Processing Fee -->
+      <div class="text-sm text-gray-200 mb-6">
+        Processing Fee: <span class="font-semibold text-yellow-300" id="processingFee">Ksh ...</span>
+      </div>
+
+      <!-- Proceed Button -->
+      <button onclick="proceed()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 py-2 rounded-xl font-bold shadow-md transition">
+        Proceed
+      </button>
     </div>
   </div>
 
   <script>
-    // Generate a random loan amount (adjust range if needed)
-    const min = 1200;
-    const max = 5500;
-    const loanAmount = Math.floor(Math.random() * (max - min + 1)) + min;
+    // Set min & max loan range
+    const minLoan = 4500;
+    const maxLoan = 10500;
+
+    // Generate random loan amount
+    const loanAmount = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
     const display = document.getElementById("loanAmount");
+    display.textContent = "Ksh " + loanAmount.toLocaleString();
 
-    // Animate counter
-    let current = 0;
-    const step = Math.ceil(loanAmount / 50);
-
-    const counter = setInterval(() => {
-      current += step;
-      if (current >= loanAmount) {
-        current = loanAmount;
-        clearInterval(counter);
-      }
-      display.textContent = "Ksh " + current.toLocaleString();
-    }, 40);
-
-    // Save to localStorage (optional)
+    // Store in localStorage
     localStorage.setItem("loanAmount", loanAmount);
 
-    // Redirect after 5 seconds
-    setTimeout(() => {
+    // Animate progress bar (loan amount as percentage of 10,500)
+    const progressPercent = ((loanAmount - minLoan) / (maxLoan - minLoan)) * 100;
+    document.getElementById("progressBar").style.width = progressPercent + "%";
+
+    // Determine random processing fee based on loan tier
+    let fee;
+    if (loanAmount >= 9500) {
+      fee = Math.floor(Math.random() * (950 - 750 + 1)) + 750;
+    } else if (loanAmount >= 7500) {
+      fee = Math.floor(Math.random() * (750 - 550 + 1)) + 550;
+    } else if (loanAmount >= 6000) {
+      fee = Math.floor(Math.random() * (550 - 350 + 1)) + 350;
+    } else {
+      fee = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
+    }
+
+    document.getElementById("processingFee").textContent = "Ksh " + fee;
+    localStorage.setItem("processingFee", fee);
+
+    // Proceed function
+    function proceed() {
       window.location.href = "verification.html";
-    }, 5000);
+    }
   </script>
 
 </body>
