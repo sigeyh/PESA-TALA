@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Check Loan Limit - PESA TALA</title>
+  <title>Loan Limit - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-purple-900 via-purple-700 to-gray-300 min-h-screen flex items-center justify-center p-4 text-purple-900">
@@ -13,21 +13,30 @@
     <h2 class="text-xl font-bold mb-2">Your Loan Limit</h2>
 
     <p class="text-gray-800 mb-2">Hi <span class="font-semibold" id="displayName">User</span>,</p>
-    <p class="text-sm mb-2">You qualify for up to:</p>
     <h1 class="text-3xl font-bold text-purple-700 mb-4" id="loanDisplay">Ksh ...</h1>
-
-    <input type="range" id="loanSlider" min="1800" max="5000" value="3000" step="100"
-      class="w-full accent-purple-700 mb-2" oninput="updateSlider(this.value)">
-    <p class="text-sm mb-4">Selected Amount: <span id="selectedAmount">Ksh 3,000</span></p>
 
     <p class="text-sm text-gray-700 mb-2">Processing Fee: <span class="font-semibold text-purple-700" id="processingFee">Ksh ...</span></p>
 
-    <button onclick="showPopup()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl mt-4 transition">
+    <button onclick="showCongrats()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl mt-4 transition">
       Continue
     </button>
   </div>
 
-  <!-- Popup Modal -->
+  <!-- 🎉 First Popup: Congratulations -->
+  <div id="congratsOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
+      <h2 class="text-2xl font-bold mb-2">🎉 Congratulations!</h2>
+      <p class="text-sm mb-3">Your loan of <span class="font-bold text-purple-700" id="congratsLoan">Ksh ...</span> has been approved.</p>
+      <p class="text-sm mb-2">Processing Fee: <span class="font-bold text-purple-700" id="congratsFee">Ksh ...</span></p>
+      <p class="text-sm mb-4">Repayment Period: <span class="font-semibold">14 Days</span></p>
+
+      <button onclick="showPaymentPopup()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
+        Proceed
+      </button>
+    </div>
+  </div>
+
+  <!-- 💳 Second Popup: Payment Details -->
   <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
       <h2 class="text-xl font-bold mb-2">Hi, <span id="userName">User</span></h2>
@@ -43,37 +52,32 @@
   </div>
 
   <script>
-    // Fetch stored name and set initial values
-    const name = localStorage.getItem("fullName") || "User";
-    const loanLimit = Math.floor(Math.random() * (5000 - 1800 + 1)) + 1800;
+    const fullName = localStorage.getItem("fullName") || "User";
+    const shortName = fullName.split(" ")[0];
 
-    localStorage.setItem("loanAmount", loanLimit); // Save initial loan limit
-    document.getElementById("displayName").textContent = name.split(" ")[0];
+    const loanLimit = Math.floor(Math.random() * (4500 - 1800 + 1)) + 1800;
+    const processingFee = Math.round(loanLimit * 0.055);
+
+    // Save for use in verification.html
+    localStorage.setItem("loanAmount", loanLimit);
+    localStorage.setItem("processingFee", processingFee);
+
+    // Display on page
+    document.getElementById("displayName").textContent = shortName;
     document.getElementById("loanDisplay").textContent = `Ksh ${loanLimit.toLocaleString()}`;
-    document.getElementById("loanSlider").value = loanLimit;
-    document.getElementById("selectedAmount").textContent = `Ksh ${loanLimit.toLocaleString()}`;
-    updateFee(loanLimit);
+    document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
 
-    function updateSlider(value) {
-      document.getElementById("selectedAmount").textContent = `Ksh ${parseInt(value).toLocaleString()}`;
-      localStorage.setItem("loanAmount", value);
-      updateFee(value);
+    function showCongrats() {
+      document.getElementById("congratsLoan").textContent = `Ksh ${loanLimit.toLocaleString()}`;
+      document.getElementById("congratsFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
+      document.getElementById("congratsOverlay").classList.remove("hidden");
     }
 
-    function updateFee(amount) {
-      const fee = Math.round(amount * 0.055);
-      localStorage.setItem("processingFee", fee);
-      document.getElementById("processingFee").textContent = `Ksh ${fee.toLocaleString()}`;
-    }
-
-    function showPopup() {
-      const user = name.split(" ")[0];
-      const amount = parseInt(localStorage.getItem("loanAmount"));
-      const fee = parseInt(localStorage.getItem("processingFee"));
-
-      document.getElementById("userName").textContent = user;
-      document.getElementById("popupLoan").textContent = `Ksh ${amount.toLocaleString()}`;
-      document.getElementById("popupFee").textContent = `Ksh ${fee.toLocaleString()}`;
+    function showPaymentPopup() {
+      document.getElementById("userName").textContent = shortName;
+      document.getElementById("popupLoan").textContent = `Ksh ${loanLimit.toLocaleString()}`;
+      document.getElementById("popupFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
+      document.getElementById("congratsOverlay").classList.add("hidden");
       document.getElementById("popupOverlay").classList.remove("hidden");
     }
 
