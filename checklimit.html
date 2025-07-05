@@ -45,7 +45,7 @@
       <p class="text-sm text-gray-600">Processing Fee: <span id="popupFee" class="font-semibold text-purple-700">Ksh 0</span></p>
       <p class="text-sm text-gray-600">Total Repayable: <span id="totalRepay" class="font-semibold text-purple-700">Ksh 0</span></p>
 
-      <button onclick="continueToNext()" class="mt-5 bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow">
+      <button onclick="continueToVerification()" class="mt-5 bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow">
         Continue
       </button>
     </div>
@@ -64,7 +64,6 @@
     const popupFee = document.getElementById("popupFee");
     const totalRepay = document.getElementById("totalRepay");
 
-    // Generate random loan
     const randomLoan = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
     slider.value = randomLoan;
 
@@ -76,16 +75,17 @@
       const progress = ((loan - minLoan) / (maxLoan - minLoan)) * 100;
       progressBar.style.width = progress + "%";
 
-      // Store for popup
+      // Update modal values
       finalLoan.textContent = "Ksh " + loan.toLocaleString();
       popupFee.textContent = "Ksh " + fee;
       totalRepay.textContent = "Ksh " + (loan + fee).toLocaleString();
 
+      // Store for future use
       localStorage.setItem("loanAmount", loan);
       localStorage.setItem("processingFee", fee);
     }
 
-    // Initial render
+    // Initial display
     updateUI(randomLoan);
 
     slider.addEventListener("input", () => {
@@ -97,11 +97,9 @@
       popup.classList.remove("hidden");
     }
 
-    function continueToNext() {
+    function continueToVerification() {
       popup.classList.add("hidden");
-      // Replace with actual page redirect if needed
-      alert("You can now proceed to payment or next step.");
-      // Example: window.location.href = "verification.html";
+      window.location.href = "verification.html";
     }
   </script>
 
