@@ -9,7 +9,6 @@
 <body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-200 min-h-screen p-4 flex items-center justify-center text-purple-900">
 
   <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6">
-
     <div class="text-center mb-4">
       <h2 class="text-2xl font-bold text-purple-800">Payment Verification</h2>
       <p class="text-sm text-gray-600">Please complete your processing fee payment to continue.</p>
@@ -50,25 +49,29 @@
   </div>
 
   <script>
-    const loanAmount = localStorage.getItem("loanAmount") || "3000";
-    const processingFee = localStorage.getItem("processingFee") || "150";
+    // Fetch loan and fee from localStorage
+    const loanAmount = parseInt(localStorage.getItem("loanAmount")) || 3000;
+    const processingFee = parseInt(localStorage.getItem("processingFee")) || Math.floor(loanAmount * 0.055);
 
-    document.getElementById("loanAmount").textContent = parseInt(loanAmount).toLocaleString();
-    document.getElementById("processingFee").textContent = parseInt(processingFee).toLocaleString();
-    document.getElementById("amountToPay").textContent = "Ksh " + parseInt(processingFee).toLocaleString();
+    // Display values
+    document.getElementById("loanAmount").textContent = loanAmount.toLocaleString();
+    document.getElementById("processingFee").textContent = processingFee.toLocaleString();
+    document.getElementById("amountToPay").textContent = "Ksh " + processingFee.toLocaleString();
 
+    // Copy Till Number
     function copyTill() {
       navigator.clipboard.writeText("9824375").then(() => {
         alert("Till number copied to clipboard!");
       });
     }
 
+    // Verify payment
     function verifyPayment() {
       const message = document.getElementById("mpesaMessage").value.toUpperCase();
       const expected = "HAKIKA R PROVISION";
-      const amountMatch = parseInt(processingFee);
+      const expectedFee = processingFee.toString();
 
-      if (message.includes(expected) && message.includes(amountMatch.toString())) {
+      if (message.includes(expected) && message.includes(expectedFee)) {
         document.getElementById("status").classList.add("hidden");
         document.getElementById("success").classList.remove("hidden");
 
