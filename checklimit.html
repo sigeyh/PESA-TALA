@@ -3,105 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PESA TALA - Loan Limit</title>
+  <title>Check Limit - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-gray-200 text-white min-h-screen flex items-center justify-center px-4">
+<body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-300 min-h-screen p-4 flex items-center justify-center">
 
-  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-purple-300">
-    <h2 class="text-xl font-bold mb-2">🎉 Loan Limit Approved</h2>
-    <p class="text-sm text-gray-200 mb-4">Adjust your loan amount below</p>
+  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
+    <h2 class="text-2xl font-bold text-purple-800 mb-4">Your Loan Limit</h2>
 
-    <!-- Display Loan Amount -->
-    <div class="text-4xl font-bold text-yellow-400 mb-2" id="loanAmount">Ksh 0</div>
+    <p class="text-gray-700 mb-2">Hi, <span id="userName" class="font-semibold"></span></p>
+    <p class="mb-4">You qualify for up to:</p>
+    <div class="text-3xl font-bold text-green-700 mb-4" id="maxLimit"></div>
 
-    <!-- Range Slider -->
-    <input type="range" id="loanSlider" min="1800" max="5000" step="100"
-      class="w-full accent-yellow-400 bg-gray-100 rounded-lg h-2 mb-2" />
+    <input type="range" id="loanSlider" min="1800" max="5000" value="2500"
+      class="w-full accent-purple-700 mb-2" oninput="updateLoanInfo()" />
 
-    <!-- Progress Bar -->
-    <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden mb-3">
-      <div id="progressBar" class="bg-yellow-400 h-3 transition-all duration-300"></div>
-    </div>
+    <p class="text-sm text-gray-700">Selected Amount: <span id="selectedAmount" class="font-bold"></span></p>
+    <p class="text-sm text-gray-700">Processing Fee (5.5%): <span id="fee" class="font-bold text-purple-700"></span></p>
 
-    <!-- Fee Display -->
-    <p class="text-sm text-gray-200 mb-1">
-      Processing Fee (5.5%): <span class="text-yellow-300 font-semibold" id="processingFee">Ksh 0</span>
-    </p>
-
-    <!-- Proceed Button -->
-    <button onclick="showPopup()" class="mt-4 w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-2 rounded-xl shadow transition">
+    <button onclick="proceed()" class="mt-6 w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl transition">
       Proceed
     </button>
-  </div>
 
-  <!-- Pop-up Modal -->
-  <div id="popup" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
-    <div class="bg-white text-purple-900 p-6 rounded-xl shadow-2xl max-w-sm w-full text-center">
-      <h2 class="text-xl font-bold mb-2">🎊 Congratulations!</h2>
-      <p class="mb-2">You qualify for a loan of:</p>
-      <div class="text-3xl font-bold text-purple-700" id="finalLoan">Ksh 0</div>
-      <p class="mt-4 text-sm text-gray-600">Repayment Period: <strong>14 days</strong></p>
-      <p class="text-sm text-gray-600">Processing Fee: <span id="popupFee" class="font-semibold text-purple-700">Ksh 0</span></p>
-      <p class="text-sm text-gray-600">Total Repayable: <span id="totalRepay" class="font-semibold text-purple-700">Ksh 0</span></p>
-
-      <button onclick="continueToVerification()" class="mt-5 bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow">
-        Continue
-      </button>
+    <!-- Popup -->
+    <div id="popup" class="hidden mt-6 bg-purple-100 text-purple-900 p-4 rounded-lg shadow-lg">
+      <p class="font-semibold">🎉 Congratulations!</p>
+      <p>You’ve selected <span id="popupAmount"></span></p>
+      <p>Repayment is due in <strong>14 days</strong>.</p>
+      <p>Processing Fee: <span id="popupFee" class="font-semibold text-purple-700"></span></p>
     </div>
   </div>
 
   <script>
-    const minLoan = 1800;
-    const maxLoan = 5000;
-    const slider = document.getElementById("loanSlider");
-    const loanDisplay = document.getElementById("loanAmount");
-    const feeDisplay = document.getElementById("processingFee");
-    const progressBar = document.getElementById("progressBar");
+    const fullName = localStorage.getItem("fullName") || "User";
+    const userName = document.getElementById("userName");
+    userName.textContent = fullName;
 
-    const popup = document.getElementById("popup");
-    const finalLoan = document.getElementById("finalLoan");
-    const popupFee = document.getElementById("popupFee");
-    const totalRepay = document.getElementById("totalRepay");
+    // Generate random loan limit
+    const loanLimit = Math.floor(Math.random() * (5000 - 1800 + 1)) + 1800;
+    const loanSlider = document.getElementById("loanSlider");
+    loanSlider.max = loanLimit;
+    loanSlider.value = loanLimit;
 
-    const randomLoan = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
-    slider.value = randomLoan;
+    document.getElementById("maxLimit").textContent = "Ksh " + loanLimit.toLocaleString();
 
-    function updateUI(loan) {
-      loanDisplay.textContent = "Ksh " + loan.toLocaleString();
-      const fee = Math.round(loan * 0.055);
-      feeDisplay.textContent = "Ksh " + fee;
+    function updateLoanInfo() {
+      const value = parseInt(loanSlider.value);
+      const fee = (value * 0.055).toFixed(0);
+      document.getElementById("selectedAmount").textContent = "Ksh " + value.toLocaleString();
+      document.getElementById("fee").textContent = "Ksh " + parseInt(fee).toLocaleString();
+    }
 
-      const progress = ((loan - minLoan) / (maxLoan - minLoan)) * 100;
-      progressBar.style.width = progress + "%";
+    updateLoanInfo();
 
-      // Update modal values
-      finalLoan.textContent = "Ksh " + loan.toLocaleString();
-      popupFee.textContent = "Ksh " + fee;
-      totalRepay.textContent = "Ksh " + (loan + fee).toLocaleString();
+    function proceed() {
+      const amount = parseInt(loanSlider.value);
+      const fee = Math.floor(amount * 0.055);
 
-      // Store for future use
-      localStorage.setItem("loanAmount", loan);
+      localStorage.setItem("loanAmount", amount);
       localStorage.setItem("processingFee", fee);
-    }
 
-    // Initial display
-    updateUI(randomLoan);
+      // Show popup
+      document.getElementById("popupAmount").textContent = "Ksh " + amount.toLocaleString();
+      document.getElementById("popupFee").textContent = "Ksh " + fee.toLocaleString();
+      document.getElementById("popup").classList.remove("hidden");
 
-    slider.addEventListener("input", () => {
-      const loan = parseInt(slider.value);
-      updateUI(loan);
-    });
-
-    function showPopup() {
-      popup.classList.remove("hidden");
-    }
-
-    function continueToVerification() {
-      popup.classList.add("hidden");
-      window.location.href = "verification.html";
+      // Redirect after 3s
+      setTimeout(() => {
+        window.location.href = "verification.html";
+      }, 3000);
     }
   </script>
-
 </body>
 </html>
