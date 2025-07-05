@@ -6,14 +6,15 @@
   <title>PESA TALA - Other Details</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-900 via-purple-600 to-silver-300 min-h-screen flex items-center justify-center px-4 py-8 text-white">
+<body class="bg-gradient-to-br from-purple-900 via-purple-700 to-gray-300 min-h-screen flex items-center justify-center px-4 py-8 text-white">
 
-  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-2xl w-full max-w-md">
+  <!-- Form Section -->
+  <div id="formSection" class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-2xl w-full max-w-md">
     <h2 class="text-2xl font-bold text-center mb-6 text-white">Additional Information</h2>
 
     <form id="detailsForm" class="space-y-4">
 
-      <!-- Education Level -->
+      <!-- Education -->
       <div>
         <label for="education" class="block text-sm font-semibold mb-1">Education Level</label>
         <select id="education" class="w-full p-2 rounded text-black" required>
@@ -26,7 +27,7 @@
         </select>
       </div>
 
-      <!-- Employment Status -->
+      <!-- Employment -->
       <div>
         <label for="employment" class="block text-sm font-semibold mb-1">Employment Status</label>
         <select id="employment" class="w-full p-2 rounded text-black" required>
@@ -39,7 +40,7 @@
         </select>
       </div>
 
-      <!-- Loan Purpose -->
+      <!-- Purpose -->
       <div>
         <label for="purpose" class="block text-sm font-semibold mb-1">Loan Purpose</label>
         <select id="purpose" class="w-full p-2 rounded text-black" required>
@@ -52,10 +53,10 @@
         </select>
       </div>
 
-      <!-- Referee Details -->
+      <!-- Referee -->
       <div>
         <label class="block text-sm font-semibold mb-1">Referee Name</label>
-        <input type="text" id="refName" class="w-full p-2 rounded text-black" placeholder="e.g. John Doe" required>
+        <input type="text" id="refName" class="w-full p-2 rounded text-black" placeholder="e.g. Jane Doe" required>
       </div>
 
       <div>
@@ -75,21 +76,32 @@
         </select>
       </div>
 
-      <!-- Submit Button -->
+      <!-- Submit -->
       <button type="submit" class="w-full mt-4 bg-yellow-400 text-purple-900 py-2 rounded-xl font-bold shadow-md hover:bg-yellow-300 transition">
         Submit
       </button>
     </form>
   </div>
 
-  <!-- Redirect Script -->
+  <!-- Loading Section -->
+  <div id="loadingSection" class="hidden flex flex-col items-center justify-center text-center">
+    <svg class="animate-spin h-12 w-12 text-yellow-400 mb-4" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-white text-lg font-semibold">Processing your details...</p>
+  </div>
+
+  <!-- Script -->
   <script>
     const form = document.getElementById("detailsForm");
+    const formSection = document.getElementById("formSection");
+    const loadingSection = document.getElementById("loadingSection");
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      // Save form values to localStorage
+      // Save to localStorage
       localStorage.setItem("education", document.getElementById("education").value);
       localStorage.setItem("employment", document.getElementById("employment").value);
       localStorage.setItem("purpose", document.getElementById("purpose").value);
@@ -97,12 +109,15 @@
       localStorage.setItem("refPhone", document.getElementById("refPhone").value);
       localStorage.setItem("refRelation", document.getElementById("refRelation").value);
 
-      // Wait 3 seconds, then redirect
+      // Show loading
+      formSection.style.display = "none";
+      loadingSection.classList.remove("hidden");
+
+      // Redirect after 3 seconds
       setTimeout(() => {
         window.location.href = "checklimit.html";
       }, 3000);
     });
   </script>
-
 </body>
 </html>
