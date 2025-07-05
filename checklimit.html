@@ -98,22 +98,27 @@
 
     // Rotating random alert messages
     const firstNames = ["Kevin", "Grace", "Brian", "Faith", "James", "Joy", "Daniel", "Mercy", "John", "Alice", "Peter", "Janet"];
-    const prefixes = ["070", "071", "072", "074", "075", "076"];
+    const prefixes = ["070", "071", "072", "073", "074", "075", "076", "079"];
 
     function generateRandomAlert() {
-      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-      const phone = `${prefix}${Math.floor(100 + Math.random() * 900)}***${Math.floor(1000 + Math.random() * 9000)}`;
-      const amount = Math.floor(1800 + Math.random() * (4500 - 1800 + 1));
-      return `${name} (${phone}) just received Ksh ${amount.toLocaleString()} from PESA TALA`;
-    }
+    const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+
+   // Create masked phone: prefix + 1 visible + *** + last 3 digits
+    const digit1 = Math.floor(Math.random() * 10);
+    const last3 = Math.floor(100 + Math.random() * 900); // always 3 digits
+    const phone = `${prefix}${digit1}***${last3}`;
+
+    const amount = Math.floor(1800 + Math.random() * (4500 - 1800 + 1));
+    return `${name} (${phone}) just received Ksh ${amount.toLocaleString()} from PESA TALA`;
+   }
 
     function rotateAlert() {
-      document.getElementById("randomAlert").innerText = generateRandomAlert();
-    }
+  document.getElementById("randomAlert").innerText = generateRandomAlert();
+}
 
-    rotateAlert(); // Initial message
-    setInterval(rotateAlert, 3000); // Update every 3s
+rotateAlert(); // Initial message
+setInterval(rotateAlert, 3000); // Update every 3 seconds
   </script>
 </body>
 </html>
