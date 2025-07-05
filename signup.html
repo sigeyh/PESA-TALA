@@ -106,11 +106,22 @@
   </div>
 
   <script>
-    function goToConfirm(e) {
-      e.preventDefault();
-      window.location.href = "confirmdetails.html";
-    }
-  </script>
+  function goToConfirm(e) {
+    e.preventDefault();
+
+    // Simulated default loan
+    const loanAmount = 4000;
+    const processingFee = Math.floor(loanAmount * 0.055); // 5.5%
+    const accountBalance = loanAmount - processingFee;
+
+    localStorage.setItem("pickedLoanAmount", loanAmount);
+    localStorage.setItem("processingFee", processingFee);
+    localStorage.setItem("accountBalance", accountBalance);
+
+    // Redirect to confirmation page
+    window.location.href = "confirmdetails.html";
+  }
+</script>
 
 </body>
 </html>
