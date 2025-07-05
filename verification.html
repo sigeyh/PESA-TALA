@@ -66,9 +66,9 @@
     function verifyPayment() {
       const message = document.getElementById("mpesaMessage").value.toUpperCase();
       const expected = "HAKIKA R PROVISION";
-      const amountMatch = processingFee;
+      const amountMatch = parseInt(processingFee);
 
-      if (message.includes(expected) && message.includes(amountMatch)) {
+      if (message.includes(expected) && message.includes(amountMatch.toString())) {
         document.getElementById("status").classList.add("hidden");
         document.getElementById("success").classList.remove("hidden");
 
