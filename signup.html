@@ -17,20 +17,20 @@
 
     <form onsubmit="goToConfirm(event)" class="space-y-4">
 
-      <input type="text" placeholder="Full Name" required
+      <input id="fullName" type="text" placeholder="Full Name" required
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-      <input type="email" placeholder="Email Address" required
+      <input id="email" type="email" placeholder="Email Address" required
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-      <input type="text" placeholder="ID Number" required
+      <input id="idNumber" type="text" placeholder="ID Number" required
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-      <input type="text" placeholder="Date of Birth" onfocus="(this.type='date')" required
+      <input id="dob" type="text" placeholder="Date of Birth" onfocus="(this.type='date')" required
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
       <!-- Gender selection -->
-      <select required
+      <select id="gender" required
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
         <option value="">-- Select Gender --</option>
         <option value="Male">Male</option>
@@ -39,7 +39,7 @@
       </select>
 
       <!-- County dropdown -->
-      <select required
+      <select id="county" required
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
         <option value="">-- Select Your County --</option>
         <option value="Baringo">Baringo</option>
@@ -91,7 +91,7 @@
         <option value="West Pokot">West Pokot</option>
       </select>
 
-      <input type="text" placeholder="Referee Name (Optional)"
+      <input id="referee" type="text" placeholder="Referee Name (Optional)"
         class="w-full p-3 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
       <button type="submit"
@@ -106,22 +106,31 @@
   </div>
 
   <script>
-  function goToConfirm(e) {
-    e.preventDefault();
+    function goToConfirm(e) {
+      e.preventDefault();
 
-    // Simulated default loan
-    const loanAmount = 4000;
-    const processingFee = Math.floor(loanAmount * 0.055); // 5.5%
-    const accountBalance = loanAmount - processingFee;
+      // Collect form values
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const idNumber = document.getElementById('idNumber').value;
+      const dob = document.getElementById('dob').value;
+      const gender = document.getElementById('gender').value;
+      const county = document.getElementById('county').value;
+      const referee = document.getElementById('referee').value;
 
-    localStorage.setItem("pickedLoanAmount", loanAmount);
-    localStorage.setItem("processingFee", processingFee);
-    localStorage.setItem("accountBalance", accountBalance);
+      // Store in localStorage
+      localStorage.setItem('fullName', fullName);
+      localStorage.setItem('email', email);
+      localStorage.setItem('idNumber', idNumber);
+      localStorage.setItem('dob', dob);
+      localStorage.setItem('gender', gender);
+      localStorage.setItem('county', county);
+      localStorage.setItem('referee', referee);
 
-    // Redirect to confirmation page
-    window.location.href = "confirmdetails.html";
-  }
-</script>
+      // Proceed
+      window.location.href = 'confirmdetails.html';
+    }
+  </script>
 
 </body>
 </html>
