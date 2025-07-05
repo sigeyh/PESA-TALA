@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loan Eligibility</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #cc2b5e, #753a88);
+      color: #1e1e2f;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    #canvasContainer {
+      position: relative;
+      width: 75vw;
+      height: 75vw;
+      max-width: 500px;
+      max-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease, opacity 0.25s ease;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease, opacity 0.25s ease;
+    }
+
+    .minimized {
+      transform: scale(0.3);
+      opacity: 0.25;
+    }
+
+    .view-btn button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: linear-gradient(to right, #ff7e00, #ff9900);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .view-btn button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
+    }
+
+    .message-box {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 24px;
+      border-radius: 20px;
+      text-align: center;
+      width: 75vw;
+      max-width: 400px;
+      font-size: 1rem;
+      z-index: 20;
+    }
+
+    .message-box span {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #ffcc80;
+    }
+
+    .message-box button {
+      margin-top: 20px;
+      padding: 16px 32px;
+      background-color: #ff8800;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+
+    .message-box button:hover {
+      background-color: #e67e00;
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Loan Eligibility</h1>
+
+  <div id="canvasContainer">
+    <canvas id="progressCanvas" width="300" height="300"></canvas>
+    <div class="message-box" id="resultBox">
+      🎉 <strong>Congratulations!</strong><br>
+      You are eligible for a loan of <span id="loanAmountText">Ksh ...</span>.<br>
+      Repayment period: <strong>14 days</strong><br>
+      Service Fee (8%): <span id="feeText">Ksh ...</span><br>
+      Amount to be disbursed: <span id="finalAmountText">Ksh ...</span><br>
+      <button onclick="window.location.href='verification.html'">Proceed</button>
+    </div>
+  </div>
+
+  <div class="view-btn" id="viewBtnContainer" style="display:none;">
+    <button id="viewDetails">View Details</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('progressCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 120;
+
+    function formatNumber(num) {
+      return num.toLocaleString('en-KE');
+    }
+
+    function generateLoan() {
+      const min = 4500;
+      const max = 8500;
+      return Math.round((Math.random() * (max - min + 1) + min) / 5) * 5;
+    }
+
+    const targetValue = generateLoan();
+    let currentValue = 0;
+    let startTime = null;
+    const duration = 3000;
+
+    function drawProgress(value) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 20;
+      ctx.stroke();
+
+      const progress = value / targetValue;
+      const endAngle = -Math.PI / 2 + progress * 2 * Math.PI;
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
+      ctx.strokeStyle = '#ff9900';
+      ctx.lineWidth = 20;
+      ctx.stroke();
+
+      ctx.fillStyle = '#333';
+      ctx.font = '24px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Ksh ' + formatNumber(value), centerX, centerY);
+    }
+
+    function animateProgress(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const ratio = Math.min(elapsed / duration, 1);
+
+      currentValue = Math.round((ratio * targetValue) / 5) * 5;
+      drawProgress(currentValue);
+
+      if (ratio < 1) {
+        requestAnimationFrame(animateProgress);
+      } else {
+        document.getElementById('viewBtnContainer').style.display = 'block';
+      }
+    }
+
+    document.getElementById('viewDetails').addEventListener('click', () => {
+      const displayFeePercent = 8;
+      const actualFeePercent = 5.2;
+
+      const displayFee = Math.round(targetValue * (displayFeePercent / 100));
+      const savingsFee = Math.round(targetValue * (actualFeePercent / 100));
+      const disbursable = targetValue - savingsFee;
+
+      localStorage.setItem("loanAmount", targetValue);
+      localStorage.setItem("processingFee", displayFee);
+      localStorage.setItem("savingsFee", savingsFee);
+      localStorage.setItem("disbursableAmount", disbursable);
+
+      document.getElementById("loanAmountText").textContent = "Ksh " + formatNumber(targetValue);
+      document.getElementById("feeText").textContent = "Ksh " + formatNumber(displayFee);
+      document.getElementById("finalAmountText").textContent = "Ksh " + formatNumber(disbursable);
+
+      canvas.classList.add('minimized');
+
+      setTimeout(() => {
+        document.getElementById('resultBox').style.display = 'block';
+        document.getElementById('viewBtnContainer').style.display = 'none';
+      }, 500);
+    });
+
+    requestAnimationFrame(animateProgress);
+  </script>
+</body>
+</html>

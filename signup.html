@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Inuka Loans</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-green-900 via-green-600 to-yellow-500 min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-lg bg-white/90 text-green-900 border border-green-200 backdrop-blur-md rounded-2xl p-6 shadow-2xl">
+    <h1 class="text-3xl font-bold text-center mb-6">Sign Up</h1>
+
+    <form id="signupForm" class="space-y-4">
+      <div>
+        <label for="lastname" class="block text-sm font-medium">Last Name</label>
+        <input type="text" id="lastname" name="lastname" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 rounded-md placeholder-green-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label for="firstname" class="block text-sm font-medium">First Name</label>
+        <input type="text" id="firstname" name="firstname" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 rounded-md placeholder-green-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label for="phone" class="block text-sm font-medium">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 rounded-md placeholder-green-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label for="idnumber" class="block text-sm font-medium">ID Number</label>
+        <input type="text" id="idnumber" name="idnumber" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 rounded-md placeholder-green-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-medium">Email Address</label>
+        <input type="email" id="email" name="email" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 rounded-md placeholder-green-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label for="location" class="block text-sm font-medium">Select Location</label>
+        <select id="location" name="location" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 text-green-900 rounded-md focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+          <option value="">--Select County--</option>
+          <option value="Mombasa">Mombasa</option>
+          <option value="Kwale">Kwale</option>
+          <option value="Kilifi">Kilifi</option>
+          <option value="Tana River">Tana River</option>
+          <option value="Lamu">Lamu</option>
+          <option value="Taita-Taveta">Taita-Taveta</option>
+          <option value="Garissa">Garissa</option>
+          <option value="Wajir">Wajir</option>
+          <option value="Mandera">Mandera</option>
+          <option value="Marsabit">Marsabit</option>
+          <option value="Isiolo">Isiolo</option>
+          <option value="Meru">Meru</option>
+          <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+          <option value="Embu">Embu</option>
+          <option value="Kitui">Kitui</option>
+          <option value="Machakos">Machakos</option>
+          <option value="Makueni">Makueni</option>
+          <option value="Nyandarua">Nyandarua</option>
+          <option value="Nyeri">Nyeri</option>
+          <option value="Kirinyaga">Kirinyaga</option>
+          <option value="Murang'a">Murang'a</option>
+          <option value="Kiambu">Kiambu</option>
+          <option value="Turkana">Turkana</option>
+          <option value="West Pokot">West Pokot</option>
+          <option value="Samburu">Samburu</option>
+          <option value="Trans Nzoia">Trans Nzoia</option>
+          <option value="Uasin Gishu">Uasin Gishu</option>
+          <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+          <option value="Nandi">Nandi</option>
+          <option value="Baringo">Baringo</option>
+          <option value="Laikipia">Laikipia</option>
+          <option value="Nakuru">Nakuru</option>
+          <option value="Narok">Narok</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Kericho">Kericho</option>
+          <option value="Bomet">Bomet</option>
+          <option value="Kakamega">Kakamega</option>
+          <option value="Vihiga">Vihiga</option>
+          <option value="Bungoma">Bungoma</option>
+          <option value="Busia">Busia</option>
+          <option value="Siaya">Siaya</option>
+          <option value="Kisumu">Kisumu</option>
+          <option value="Homa Bay">Homa Bay</option>
+          <option value="Migori">Migori</option>
+          <option value="Nyamira">Nyamira</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="dob" class="block text-sm font-medium">Date of Birth</label>
+        <input type="date" id="dob" name="dob" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 text-green-900 rounded-md focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label for="Gender" class="block text-sm font-medium">Select Gender</label>
+        <select id="Gender" name="Gender" required
+          class="w-full px-4 py-2 mt-1 bg-green-100 text-green-900 rounded-md focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+          <option value="">--Select Gender--</option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+        </select>
+      </div>
+
+      <button type="button" id="submitBtn"
+        class="w-full mt-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-green-900 rounded-lg font-semibold transition duration-300 shadow-md">
+        Submit
+      </button>
+    </form>
+  </div>
+
+  <!-- Script to store form data -->
+  <script>
+    document.getElementById('submitBtn').addEventListener('click', function () {
+      let form = document.getElementById('signupForm');
+      if (!form.checkValidity()) {
+        alert("Please fill in all required fields before proceeding.");
+        return;
+      }
+
+      localStorage.setItem('lastname', document.getElementById('lastname').value);
+      localStorage.setItem('firstname', document.getElementById('firstname').value);
+      localStorage.setItem('phone', document.getElementById('phone').value);
+      localStorage.setItem('idnumber', document.getElementById('idnumber').value);
+      localStorage.setItem('email', document.getElementById('email').value);
+      localStorage.setItem('location', document.getElementById('location').value);
+      localStorage.setItem('dob', document.getElementById('dob').value);
+      localStorage.setItem('Gender', document.getElementById('Gender').value);
+
+      window.location.href = 'password.html';
+    });
+  </script>
+
+</body>
+</html>
