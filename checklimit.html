@@ -6,80 +6,104 @@
   <title>PESA TALA - Loan Limit</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-gray-300 flex items-center justify-center min-h-screen px-4 text-white">
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-gray-200 text-white min-h-screen flex items-center justify-center px-4">
 
-  <div class="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
-    <!-- Header -->
-    <svg class="w-14 h-14 mx-auto text-green-400 animate-bounce mb-3" fill="none" stroke="currentColor" stroke-width="2"
-      viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-    </svg>
-    <h2 class="text-2xl font-bold mb-1">Loan Limit Approved</h2>
-    <p class="text-sm text-gray-200">Adjust your limit and see updated fees</p>
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-purple-300">
+    <h2 class="text-xl font-bold mb-2">🎉 Loan Limit Approved</h2>
+    <p class="text-sm text-gray-200 mb-4">Adjust your loan amount below</p>
 
-    <!-- Loan Display -->
-    <div class="text-4xl font-bold text-yellow-300 my-3" id="loanAmount">Ksh 0</div>
+    <!-- Display Loan Amount -->
+    <div class="text-4xl font-bold text-yellow-400 mb-2" id="loanAmount">Ksh 0</div>
 
-    <!-- Range Input -->
-    <input type="range" id="loanSlider" min="4500" max="10500" step="100"
-      class="w-full accent-yellow-400 bg-gray-100 rounded-lg overflow-hidden appearance-none h-2 mb-3"
-    />
+    <!-- Range Slider -->
+    <input type="range" id="loanSlider" min="1800" max="5000" step="100"
+      class="w-full accent-yellow-400 bg-gray-100 rounded-lg h-2 mb-2" />
 
     <!-- Progress Bar -->
-    <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden mb-4">
-      <div id="progressBar" class="bg-yellow-400 h-3 transition-all duration-500" style="width: 100%"></div>
+    <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden mb-3">
+      <div id="progressBar" class="bg-yellow-400 h-3 transition-all duration-300"></div>
     </div>
 
-    <!-- Processing Fee -->
-    <p class="text-sm text-gray-200">
-      Processing Fee: <span class="text-yellow-300 font-semibold" id="processingFee">Ksh 0</span>
+    <!-- Fee Display -->
+    <p class="text-sm text-gray-200 mb-1">
+      Processing Fee (5.5%): <span class="text-yellow-300 font-semibold" id="processingFee">Ksh 0</span>
     </p>
 
     <!-- Proceed Button -->
-    <button onclick="proceed()" class="mt-5 w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 py-2 rounded-xl font-bold shadow transition">
+    <button onclick="showPopup()" class="mt-4 w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-2 rounded-xl shadow transition">
       Proceed
     </button>
   </div>
 
-  <script>
-    const minLoan = 4500;
-    const maxLoan = 10500;
+  <!-- Pop-up Modal -->
+  <div id="popup" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+    <div class="bg-white text-purple-900 p-6 rounded-xl shadow-2xl max-w-sm w-full text-center">
+      <h2 class="text-xl font-bold mb-2">🎊 Congratulations!</h2>
+      <p class="mb-2">You qualify for a loan of:</p>
+      <div class="text-3xl font-bold text-purple-700" id="finalLoan">Ksh 0</div>
+      <p class="mt-4 text-sm text-gray-600">Repayment Period: <strong>14 days</strong></p>
+      <p class="text-sm text-gray-600">Processing Fee: <span id="popupFee" class="font-semibold text-purple-700">Ksh 0</span></p>
+      <p class="text-sm text-gray-600">Total Repayable: <span id="totalRepay" class="font-semibold text-purple-700">Ksh 0</span></p>
 
-    // Random loan limit start
-    const initialLoan = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
+      <button onclick="continueToNext()" class="mt-5 bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow">
+        Continue
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const minLoan = 1800;
+    const maxLoan = 5000;
     const slider = document.getElementById("loanSlider");
     const loanDisplay = document.getElementById("loanAmount");
-    const progressBar = document.getElementById("progressBar");
     const feeDisplay = document.getElementById("processingFee");
+    const progressBar = document.getElementById("progressBar");
 
-    // Set initial value
-    slider.value = initialLoan;
+    const popup = document.getElementById("popup");
+    const finalLoan = document.getElementById("finalLoan");
+    const popupFee = document.getElementById("popupFee");
+    const totalRepay = document.getElementById("totalRepay");
+
+    // Generate random loan
+    const randomLoan = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
+    slider.value = randomLoan;
 
     function updateUI(loan) {
       loanDisplay.textContent = "Ksh " + loan.toLocaleString();
-      localStorage.setItem("loanAmount", loan);
+      const fee = Math.round(loan * 0.055);
+      feeDisplay.textContent = "Ksh " + fee;
 
-      // Progress % for bar
       const progress = ((loan - minLoan) / (maxLoan - minLoan)) * 100;
       progressBar.style.width = progress + "%";
 
-      // Fee calculation (100–250)
-      const fee = Math.floor(Math.random() * (250 - 100 + 1)) + 100;
-      feeDisplay.textContent = "Ksh " + fee;
+      // Store for popup
+      finalLoan.textContent = "Ksh " + loan.toLocaleString();
+      popupFee.textContent = "Ksh " + fee;
+      totalRepay.textContent = "Ksh " + (loan + fee).toLocaleString();
+
+      localStorage.setItem("loanAmount", loan);
       localStorage.setItem("processingFee", fee);
     }
 
-    // Initial setup
-    updateUI(initialLoan);
+    // Initial render
+    updateUI(randomLoan);
 
-    // Update on slider move
     slider.addEventListener("input", () => {
-      updateUI(parseInt(slider.value));
+      const loan = parseInt(slider.value);
+      updateUI(loan);
     });
 
-    function proceed() {
-      window.location.href = "verification.html";
+    function showPopup() {
+      popup.classList.remove("hidden");
+    }
+
+    function continueToNext() {
+      popup.classList.add("hidden");
+      // Replace with actual page redirect if needed
+      alert("You can now proceed to payment or next step.");
+      // Example: window.location.href = "verification.html";
     }
   </script>
+
 </body>
 </html>
