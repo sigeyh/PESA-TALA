@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-300 min-h-screen p-4 flex items-center justify-center">
 
-  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
+  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center relative">
     <h2 class="text-2xl font-bold text-purple-800 mb-4">Your Loan Limit</h2>
 
     <p class="text-gray-700 mb-2">Hi, <span id="userName" class="font-semibold"></span></p>
@@ -25,21 +25,24 @@
       Proceed
     </button>
 
-    <!-- Popup -->
-    <div id="popup" class="hidden mt-6 bg-purple-100 text-purple-900 p-4 rounded-lg shadow-lg">
-      <p class="font-semibold">🎉 Congratulations!</p>
-      <p>You’ve selected <span id="popupAmount"></span></p>
-      <p>Repayment is due in <strong>14 days</strong>.</p>
-      <p>Processing Fee: <span id="popupFee" class="font-semibold text-purple-700"></span></p>
+    <!-- Popup Modal -->
+    <div id="popup" class="hidden absolute inset-0 bg-white/95 p-6 flex flex-col items-center justify-center rounded-2xl shadow-lg z-50">
+      <p class="text-xl font-bold text-purple-800 mb-2">🎉 Congratulations!</p>
+      <p class="mb-2 text-gray-800">You’ve selected: <span id="popupAmount" class="font-semibold text-green-700"></span></p>
+      <p class="mb-2 text-gray-800">Repayment Period: <span class="font-semibold text-purple-700">14 days</span></p>
+      <p class="mb-4 text-gray-800">Processing Fee: <span id="popupFee" class="font-semibold text-purple-700"></span></p>
+
+      <button onclick="goToVerification()"
+        class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-6 rounded-xl shadow">
+        Continue
+      </button>
     </div>
   </div>
 
   <script>
     const fullName = localStorage.getItem("fullName") || "User";
-    const userName = document.getElementById("userName");
-    userName.textContent = fullName;
+    document.getElementById("userName").textContent = fullName;
 
-    // Generate random loan limit
     const loanLimit = Math.floor(Math.random() * (5000 - 1800 + 1)) + 1800;
     const loanSlider = document.getElementById("loanSlider");
     loanSlider.max = loanLimit;
@@ -49,9 +52,9 @@
 
     function updateLoanInfo() {
       const value = parseInt(loanSlider.value);
-      const fee = (value * 0.055).toFixed(0);
+      const fee = Math.floor(value * 0.055);
       document.getElementById("selectedAmount").textContent = "Ksh " + value.toLocaleString();
-      document.getElementById("fee").textContent = "Ksh " + parseInt(fee).toLocaleString();
+      document.getElementById("fee").textContent = "Ksh " + fee.toLocaleString();
     }
 
     updateLoanInfo();
@@ -63,15 +66,13 @@
       localStorage.setItem("loanAmount", amount);
       localStorage.setItem("processingFee", fee);
 
-      // Show popup
       document.getElementById("popupAmount").textContent = "Ksh " + amount.toLocaleString();
       document.getElementById("popupFee").textContent = "Ksh " + fee.toLocaleString();
       document.getElementById("popup").classList.remove("hidden");
+    }
 
-      // Redirect after 3s
-      setTimeout(() => {
-        window.location.href = "verification.html";
-      }, 3000);
+    function goToVerification() {
+      window.location.href = "verification.html";
     }
   </script>
 </body>
