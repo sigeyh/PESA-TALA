@@ -8,13 +8,14 @@
 </head>
 <body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-200 min-h-screen p-4 flex items-center justify-center text-purple-900">
 
-  <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6">
+  <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6 relative">
     <div class="text-center mb-4">
-      <h2 class="text-2xl font-bold text-purple-800">Hi, <span id="userName">User</span></h2>
+      <h2 class="text-2xl font-bold text-purple-800">Payment Verification</h2>
       <p class="text-sm text-gray-600">Please complete your processing fee payment to continue.</p>
     </div>
 
     <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-sm mb-4">
+      <p><strong>Name:</strong> <span id="borrowerName">...</span></p>
       <p><strong>Loan Amount:</strong> Ksh <span id="loanAmount">...</span></p>
       <p><strong>Processing Fee:</strong> Ksh <span id="processingFee">...</span></p>
     </div>
@@ -24,7 +25,9 @@
       <ul class="space-y-1">
         <li>Go to M-PESA: <strong>M-PESA</strong></li>
         <li>Lipa na M-PESA: <strong>LIPA NA MPESA</strong></li>
-        <li>Enter Till Number: <strong id="tillNumber">9824375</strong>
+        <li>
+          Enter Till Number: 
+          <strong id="tillNumber">9824375</strong>
           <button onclick="copyTill()" class="ml-2 text-xs text-purple-600 underline">Copy</button>
         </li>
         <li>Enter Amount: <strong id="amountToPay">Ksh ...</strong></li>
@@ -45,43 +48,50 @@
     </button>
 
     <p id="status" class="text-center mt-4 text-sm text-red-500 hidden">❌ Verification failed. Check message content.</p>
-    <p id="success" class="text-center mt-4 text-green-600 text-sm font-semibold hidden">✅ Payment Verified! Proceeding...</p>
+  </div>
+
+  <!-- ✅ Popup Modal -->
+  <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
+      <h2 class="text-xl font-bold mb-2">✅ Payment Verified</h2>
+      <p class="text-sm mb-4">Thank you, <strong id="popupUser">User</strong>.</p>
+      <p class="text-sm">Your payment of <strong id="popupFee">Ksh ...</strong> for loan <strong id="popupLoan">Ksh ...</strong> has been confirmed.</p>
+    </div>
   </div>
 
   <script>
-    // Get values from localStorage
-    const userName = localStorage.getItem("fullName") || "User";
-    const loanAmount = parseInt(localStorage.getItem("loanAmount")) || 3000;
-    const processingFee = parseInt(localStorage.getItem("processingFee")) || Math.floor(loanAmount * 0.055);
+    const name = localStorage.getItem("fullName") || "Borrower";
+    const loanAmount = localStorage.getItem("loanAmount") || "0";
+    const processingFee = localStorage.getItem("processingFee") || "0";
 
-    // Display values
-    document.getElementById("userName").textContent = userName;
-    document.getElementById("loanAmount").textContent = loanAmount.toLocaleString();
-    document.getElementById("processingFee").textContent = processingFee.toLocaleString();
-    document.getElementById("amountToPay").textContent = "Ksh " + processingFee.toLocaleString();
+    document.getElementById("borrowerName").textContent = name;
+    document.getElementById("loanAmount").textContent = parseInt(loanAmount).toLocaleString();
+    document.getElementById("processingFee").textContent = parseInt(processingFee).toLocaleString();
+    document.getElementById("amountToPay").textContent = "Ksh " + parseInt(processingFee).toLocaleString();
 
-    // Copy till number
     function copyTill() {
       navigator.clipboard.writeText("9824375").then(() => {
         alert("Till number copied to clipboard!");
       });
     }
 
-    // Verify payment logic
     function verifyPayment() {
       const message = document.getElementById("mpesaMessage").value.toUpperCase();
-      const expectedText = "HAKIKA R PROVISION";
-      const expectedFee = processingFee.toString();
+      const expected = "HAKIKA R PROVISION";
+      const amountMatch = processingFee;
 
-      if (message.includes(expectedText) && message.includes(expectedFee)) {
+      if (message.includes(expected) && message.includes(amountMatch)) {
+        // Success – show popup
+        document.getElementById("popupUser").textContent = name;
+        document.getElementById("popupFee").textContent = parseInt(processingFee).toLocaleString();
+        document.getElementById("popupLoan").textContent = parseInt(loanAmount).toLocaleString();
+        document.getElementById("popupOverlay").classList.remove("hidden");
         document.getElementById("status").classList.add("hidden");
-        document.getElementById("success").classList.remove("hidden");
 
         setTimeout(() => {
           window.location.href = "password.html";
-        }, 2500);
+        }, 3000);
       } else {
-        document.getElementById("success").classList.add("hidden");
         document.getElementById("status").classList.remove("hidden");
       }
     }
