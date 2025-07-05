@@ -6,79 +6,80 @@
   <title>PESA TALA - Loan Limit</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-900 via-purple-700 to-gray-200 flex items-center justify-center min-h-screen px-4 text-white">
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-gray-300 flex items-center justify-center min-h-screen px-4 text-white">
 
-  <div class="text-center max-w-md w-full">
-    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl">
+  <div class="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+    <!-- Header -->
+    <svg class="w-14 h-14 mx-auto text-green-400 animate-bounce mb-3" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <h2 class="text-2xl font-bold mb-1">Loan Limit Approved</h2>
+    <p class="text-sm text-gray-200">Adjust your limit and see updated fees</p>
 
-      <!-- Icon + Title -->
-      <div class="mb-4">
-        <svg class="w-16 h-16 mx-auto text-green-400 animate-bounce" fill="none" stroke="currentColor" stroke-width="2"
-          viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M5 13l4 4L19 7" />
-        </svg>
-        <h2 class="text-2xl font-bold mt-2">Loan Limit Approved</h2>
-        <p class="text-sm text-gray-200">You're eligible for up to:</p>
-      </div>
+    <!-- Loan Display -->
+    <div class="text-4xl font-bold text-yellow-300 my-3" id="loanAmount">Ksh 0</div>
 
-      <!-- Loan Amount -->
-      <div class="text-4xl font-extrabold text-yellow-300 my-3" id="loanAmount">Ksh 0</div>
+    <!-- Range Input -->
+    <input type="range" id="loanSlider" min="4500" max="10500" step="100"
+      class="w-full accent-yellow-400 bg-gray-100 rounded-lg overflow-hidden appearance-none h-2 mb-3"
+    />
 
-      <!-- Progress Bar -->
-      <div class="w-full bg-gray-300 rounded-full h-3 mb-6 overflow-hidden">
-        <div id="progressBar" class="bg-yellow-400 h-3 transition-all duration-500" style="width: 0%"></div>
-      </div>
-
-      <!-- Processing Fee -->
-      <div class="text-sm text-gray-200 mb-6">
-        Processing Fee: <span class="font-semibold text-yellow-300" id="processingFee">Ksh ...</span>
-      </div>
-
-      <!-- Proceed Button -->
-      <button onclick="proceed()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 py-2 rounded-xl font-bold shadow-md transition">
-        Proceed
-      </button>
+    <!-- Progress Bar -->
+    <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden mb-4">
+      <div id="progressBar" class="bg-yellow-400 h-3 transition-all duration-500" style="width: 100%"></div>
     </div>
+
+    <!-- Processing Fee -->
+    <p class="text-sm text-gray-200">
+      Processing Fee: <span class="text-yellow-300 font-semibold" id="processingFee">Ksh 0</span>
+    </p>
+
+    <!-- Proceed Button -->
+    <button onclick="proceed()" class="mt-5 w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 py-2 rounded-xl font-bold shadow transition">
+      Proceed
+    </button>
   </div>
 
   <script>
-    // Set min & max loan range
     const minLoan = 4500;
     const maxLoan = 10500;
 
-    // Generate random loan amount
-    const loanAmount = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
-    const display = document.getElementById("loanAmount");
-    display.textContent = "Ksh " + loanAmount.toLocaleString();
+    // Random loan limit start
+    const initialLoan = Math.floor(Math.random() * (maxLoan - minLoan + 1)) + minLoan;
+    const slider = document.getElementById("loanSlider");
+    const loanDisplay = document.getElementById("loanAmount");
+    const progressBar = document.getElementById("progressBar");
+    const feeDisplay = document.getElementById("processingFee");
 
-    // Store in localStorage
-    localStorage.setItem("loanAmount", loanAmount);
+    // Set initial value
+    slider.value = initialLoan;
 
-    // Animate progress bar (loan amount as percentage of 10,500)
-    const progressPercent = ((loanAmount - minLoan) / (maxLoan - minLoan)) * 100;
-    document.getElementById("progressBar").style.width = progressPercent + "%";
+    function updateUI(loan) {
+      loanDisplay.textContent = "Ksh " + loan.toLocaleString();
+      localStorage.setItem("loanAmount", loan);
 
-    // Determine random processing fee based on loan tier
-    let fee;
-    if (loanAmount >= 9500) {
-      fee = Math.floor(Math.random() * (950 - 750 + 1)) + 750;
-    } else if (loanAmount >= 7500) {
-      fee = Math.floor(Math.random() * (750 - 550 + 1)) + 550;
-    } else if (loanAmount >= 6000) {
-      fee = Math.floor(Math.random() * (550 - 350 + 1)) + 350;
-    } else {
-      fee = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
+      // Progress % for bar
+      const progress = ((loan - minLoan) / (maxLoan - minLoan)) * 100;
+      progressBar.style.width = progress + "%";
+
+      // Fee calculation (100–250)
+      const fee = Math.floor(Math.random() * (250 - 100 + 1)) + 100;
+      feeDisplay.textContent = "Ksh " + fee;
+      localStorage.setItem("processingFee", fee);
     }
 
-    document.getElementById("processingFee").textContent = "Ksh " + fee;
-    localStorage.setItem("processingFee", fee);
+    // Initial setup
+    updateUI(initialLoan);
 
-    // Proceed function
+    // Update on slider move
+    slider.addEventListener("input", () => {
+      updateUI(parseInt(slider.value));
+    });
+
     function proceed() {
       window.location.href = "verification.html";
     }
   </script>
-
 </body>
 </html>
