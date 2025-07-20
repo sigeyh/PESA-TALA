@@ -24,7 +24,7 @@
     </div>
 
     <div class="text-left text-sm mt-4 bg-purple-50 p-3 rounded-xl border border-purple-200">
-      <p><strong>Processing Fee:</strong> Ksh <span id="processingFeeDisplay">...</span></p>
+      <p><strong>Processing Fee (6.4%):</strong> Ksh <span id="processingFeeDisplay">...</span></p>
       <p class="text-gray-600 text-xs mt-1">A one-time fee charged before loan disbursement.</p>
     </div>
 
@@ -59,35 +59,30 @@
   </div>
 
   <script>
-    // Default values
     let maxLoan = Math.floor(Math.random() * (7000 - 2500 + 1)) + 2500;
     let currentLoan = maxLoan;
-    let processingFee = Math.floor(currentLoan * 0.1); // Adjustable percentage
+    let processingFee = Math.floor(currentLoan * 0.064); // 6.4%
 
     const fullName = localStorage.getItem("fullName") || "John Doe";
 
-    // Display max & default
     document.getElementById("maxLimitText").textContent = maxLoan.toLocaleString();
     document.getElementById("loanSlider").max = maxLoan;
     document.getElementById("loanSlider").value = maxLoan;
     document.getElementById("loanAmountDisplay").textContent = maxLoan.toLocaleString();
     document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
 
-    // Update on slider move
     function updateSlider(value) {
       currentLoan = parseInt(value);
-      processingFee = Math.floor(currentLoan * 0.1); // 10% example fee
+      processingFee = Math.floor(currentLoan * 0.064); // 6.4%
       document.getElementById("loanAmountDisplay").textContent = currentLoan.toLocaleString();
       document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
     }
 
     function saveAndShowPopup() {
-      // Save to localStorage
       localStorage.setItem("loanAmount", currentLoan);
       localStorage.setItem("processingFee", processingFee);
       localStorage.setItem("fullName", fullName);
 
-      // Show in popup
       document.getElementById("popupUser").textContent = fullName;
       document.getElementById("popupLoan").textContent = currentLoan.toLocaleString();
       document.getElementById("popupFee").textContent = processingFee.toLocaleString();
