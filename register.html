@@ -84,7 +84,7 @@
         document.getElementById("progress").textContent = `${progress}%`;
         if (progress >= 100) {
           clearInterval(interval);
-          window.location.href = "confirmdetails.html";
+          window.location.href = "signup.html"; // ✅ REDIRECTS TO SIGNUP
         }
       }, 100);
     }
