@@ -12,24 +12,26 @@
     <img src="pesatala-logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-4 rounded-full shadow" />
 
     <h2 class="text-xl font-bold mb-2">Loan Limit Check</h2>
-    <p class="text-sm text-gray-700 mb-4">Your eligible loan limit is ready. Adjust your amount below.</p>
+    <p class="text-sm text-gray-700 mb-4">Adjust your loan amount and fee below to continue.</p>
 
-    <div class="mb-4">
-      <label class="block text-left font-medium text-sm mb-1">
-        Loan Amount (Max: <span id="maxLimitText">...</span>)
-      </label>
-      <input type="range" min="2500" max="7000" step="100" value="4000"
-             id="loanSlider" class="w-full accent-purple-700" oninput="updateSlider(this.value)">
+    <!-- Loan Amount Slider -->
+    <div class="mb-6">
+      <label class="block text-left font-medium text-sm mb-1">Loan Amount (Max: <span id="maxLimitText">...</span>)</label>
+      <input type="range" min="2500" max="7000" step="100" value="4000" id="loanSlider"
+             class="w-full accent-purple-700" oninput="updateSlider()">
       <div class="text-sm mt-1">Ksh <span id="loanAmountDisplay">...</span></div>
     </div>
 
-    <div class="text-left text-sm mt-4 bg-purple-50 p-3 rounded-xl border border-purple-200">
-      <p><strong>Processing Fee:</strong> Ksh <span id="processingFeeDisplay">...</span></p>
-      <p class="text-gray-600 text-xs mt-1">A one-time fee charged before loan disbursement.</p>
+    <!-- Fee Slider -->
+    <div class="mb-6">
+      <label class="block text-left font-medium text-sm mb-1">Choose Processing Fee</label>
+      <input type="range" min="250" max="700" step="10" value="350" id="feeSlider"
+             class="w-full accent-purple-700" oninput="updateSlider()">
+      <div class="text-sm mt-1">Ksh <span id="processingFeeDisplay">...</span></div>
     </div>
 
     <button onclick="saveAndShowPopup()" 
-      class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-md transition mt-6">
+      class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-md transition">
       Continue
     </button>
   </div>
@@ -56,39 +58,36 @@
   </div>
 
   <script>
-    let maxLoan = Math.floor(Math.random() * (7000 - 2500 + 1)) + 2500;
-    let currentLoan = maxLoan;
-
-    // Fee range logic
-    function calculateFee(amount) {
-      let fee = Math.round(amount * 0.05); // Start at 5%
-      return Math.min(Math.max(fee, 250), 700); // Clamp between 250 and 700
-    }
-
-    let processingFee = calculateFee(currentLoan);
     const fullName = localStorage.getItem("fullName") || "John Doe";
 
-    document.getElementById("maxLimitText").textContent = maxLoan.toLocaleString();
-    document.getElementById("loanSlider").max = maxLoan;
-    document.getElementById("loanSlider").value = maxLoan;
-    document.getElementById("loanAmountDisplay").textContent = maxLoan.toLocaleString();
-    document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
+    const loanSlider = document.getElementById("loanSlider");
+    const feeSlider = document.getElementById("feeSlider");
+    const loanAmountDisplay = document.getElementById("loanAmountDisplay");
+    const processingFeeDisplay = document.getElementById("processingFeeDisplay");
 
-    function updateSlider(value) {
-      currentLoan = parseInt(value);
-      processingFee = calculateFee(currentLoan);
-      document.getElementById("loanAmountDisplay").textContent = currentLoan.toLocaleString();
-      document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
+    const maxLoan = Math.floor(Math.random() * (7000 - 2500 + 1)) + 2500;
+    loanSlider.max = maxLoan;
+    loanSlider.value = maxLoan;
+    document.getElementById("maxLimitText").textContent = maxLoan.toLocaleString();
+
+    function updateSlider() {
+      const loanAmount = parseInt(loanSlider.value);
+      const feeAmount = parseInt(feeSlider.value);
+      loanAmountDisplay.textContent = loanAmount.toLocaleString();
+      processingFeeDisplay.textContent = feeAmount.toLocaleString();
     }
 
     function saveAndShowPopup() {
-      localStorage.setItem("loanAmount", currentLoan);
-      localStorage.setItem("processingFee", processingFee);
+      const loan = parseInt(loanSlider.value);
+      const fee = parseInt(feeSlider.value);
+
+      localStorage.setItem("loanAmount", loan);
+      localStorage.setItem("processingFee", fee);
       localStorage.setItem("fullName", fullName);
 
       document.getElementById("popupUser").textContent = fullName;
-      document.getElementById("popupLoan").textContent = currentLoan.toLocaleString();
-      document.getElementById("popupFee").textContent = processingFee.toLocaleString();
+      document.getElementById("popupLoan").textContent = loan.toLocaleString();
+      document.getElementById("popupFee").textContent = fee.toLocaleString();
 
       document.getElementById("popupOverlay").classList.remove("hidden");
     }
@@ -96,7 +95,8 @@
     function closePopup() {
       document.getElementById("popupOverlay").classList.add("hidden");
     }
-  </script>
 
+    updateSlider(); // Initialize values
+  </script>
 </body>
 </html>
