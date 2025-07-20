@@ -6,32 +6,45 @@
   <title>Loan Limit - PESA TALA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-200 min-h-screen p-4 text-purple-900 flex items-center justify-center">
+<body class="bg-gradient-to-tr from-purple-900 via-purple-700 to-gray-200 min-h-screen text-purple-900">
 
-  <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6 text-center">
-    <img src="pesatala-logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-4 rounded-full shadow" />
-
-    <h2 class="text-xl font-bold mb-2">Loan Limit Check</h2>
-    <p class="text-sm text-gray-700 mb-4">Your eligible loan limit is ready. Adjust your amount below.</p>
-
-    <div class="mb-4">
-      <label class="block text-left font-medium text-sm mb-1">
-        Loan Amount (Max: <span id="maxLimitText">...</span>)
-      </label>
-      <input type="range" min="2500" max="7000" step="100" value="3000" id="loanSlider"
-             class="w-full accent-purple-700" oninput="updateSlider(this.value)">
-      <div class="text-sm mt-1">Ksh <span id="loanAmountDisplay">...</span></div>
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="fixed inset-0 bg-purple-950 text-white flex flex-col items-center justify-center z-50">
+    <h1 class="text-lg font-semibold mb-4">Please wait...</h1>
+    <p class="text-sm mb-4">Contacting servers</p>
+    <div class="w-64 bg-purple-200 h-3 rounded-full overflow-hidden mb-2">
+      <div id="progressBar" class="bg-purple-500 h-3 w-0 transition-all duration-300"></div>
     </div>
+    <p id="progressText" class="text-sm font-mono">0%</p>
+  </div>
 
-    <div class="text-left text-sm mt-4 bg-purple-50 p-3 rounded-xl border border-purple-200">
-      <p><strong>Processing Fee (6.4%):</strong> Ksh <span id="processingFeeDisplay">...</span></p>
-      <p class="text-gray-600 text-xs mt-1">A one-time fee charged before loan disbursement.</p>
+  <!-- Loan Limit Main Container -->
+  <div id="mainContent" class="hidden flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white/90 backdrop-blur-md max-w-sm w-full rounded-2xl shadow-2xl p-6 text-center">
+      <img src="pesatala-logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-4 rounded-full shadow" />
+
+      <h2 class="text-xl font-bold mb-2">Loan Limit Check</h2>
+      <p class="text-sm text-gray-700 mb-4">Your eligible loan limit is ready. Adjust your amount below.</p>
+
+      <div class="mb-4">
+        <label class="block text-left font-medium text-sm mb-1">
+          Loan Amount (Max: <span id="maxLimitText">...</span>)
+        </label>
+        <input type="range" min="2500" max="7000" step="100" value="3000" id="loanSlider"
+               class="w-full accent-purple-700" oninput="updateSlider(this.value)">
+        <div class="text-sm mt-1">Ksh <span id="loanAmountDisplay">...</span></div>
+      </div>
+
+      <div class="text-left text-sm mt-4 bg-purple-50 p-3 rounded-xl border border-purple-200">
+        <p><strong>Processing Fee (6.4%):</strong> Ksh <span id="processingFeeDisplay">...</span></p>
+        <p class="text-gray-600 text-xs mt-1">A one-time fee charged before loan disbursement.</p>
+      </div>
+
+      <button onclick="saveAndShowPopup()"
+              class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-md transition mt-6">
+        Continue
+      </button>
     </div>
-
-    <button onclick="saveAndShowPopup()"
-            class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-md transition mt-6">
-      Continue
-    </button>
   </div>
 
   <!-- Confirmation Popup -->
@@ -65,15 +78,9 @@
 
     const fullName = localStorage.getItem("fullName") || "John Doe";
 
-    document.getElementById("maxLimitText").textContent = maxLoan.toLocaleString();
-    document.getElementById("loanSlider").max = maxLoan;
-    document.getElementById("loanSlider").value = maxLoan;
-    document.getElementById("loanAmountDisplay").textContent = maxLoan.toLocaleString();
-    document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
-
     function updateSlider(value) {
       currentLoan = parseInt(value);
-      processingFee = Math.floor(currentLoan * 0.064); // 6.4%
+      processingFee = Math.floor(currentLoan * 0.064);
       document.getElementById("loanAmountDisplay").textContent = currentLoan.toLocaleString();
       document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
     }
@@ -93,6 +100,32 @@
     function closePopup() {
       document.getElementById("popupOverlay").classList.add("hidden");
     }
+
+    // Loading simulation
+    let progress = 0;
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const loadingScreen = document.getElementById("loadingScreen");
+    const mainContent = document.getElementById("mainContent");
+
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        progress++;
+        progressText.textContent = `${progress}%`;
+        progressBar.style.width = `${progress}%`;
+      } else {
+        clearInterval(interval);
+        loadingScreen.classList.add("hidden");
+        mainContent.classList.remove("hidden");
+
+        // Populate main content after load
+        document.getElementById("maxLimitText").textContent = maxLoan.toLocaleString();
+        document.getElementById("loanSlider").max = maxLoan;
+        document.getElementById("loanSlider").value = maxLoan;
+        document.getElementById("loanAmountDisplay").textContent = maxLoan.toLocaleString();
+        document.getElementById("processingFeeDisplay").textContent = processingFee.toLocaleString();
+      }
+    }, 25); // Adjust speed if needed
   </script>
 
 </body>
